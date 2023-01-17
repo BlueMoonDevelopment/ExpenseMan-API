@@ -1,0 +1,5 @@
+{
+    "website_port": 8080,
+    "debug_log": false,
+    "session_secret": "your_secret"
+}
