@@ -9,6 +9,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import { register } from './swaggerhelper';
 
 import { router } from './routes/products';
 
@@ -28,10 +29,6 @@ import { website_port, session_secret, mongodb_auth_url } from './config.json';
  */
 const app: Application = express();
 const oneDay = 1000 * 60 * 60 * 24;
-
-const ads = [
-  { title: 'Hello, world (again)!' },
-];
 
 /**
  * Database connection
@@ -66,11 +63,13 @@ app.use(
 app.disable('x-powered-by');
 
 
-app.get('/', (req, res) => {
-  res.send(ads);
-});
-
 app.use('/products', router);
+
+register(app);
+
+app.use('*', (req, res) => {
+  res.send('404 Not found');
+});
 
 
 /**
