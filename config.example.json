@@ -2,5 +2,5 @@
     "website_port": 8080,
     "debug_log": false,
     "session_secret": "your_secret",
-    "mongodb_auth_url": "mongodb://localhost/product"
+    "mongodb_auth_url": "mongodb://127.0.0.1/product"
 }
