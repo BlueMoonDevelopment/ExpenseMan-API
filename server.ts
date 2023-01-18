@@ -9,47 +9,51 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import { register } from './swaggerhelper';
-
-import { router } from './routes/products';
-
 
 /**
  * Required internal modules
  */
 import { info, errorWithError } from './logmanager';
+import { register } from './swaggerhelper';
+import { registerUserRoutes } from './routes/user.routes';
+import { registerAuthRoutes } from './routes/auth.routes';
+import { router } from './routes/products.routes';
 
 /**
  * Required configuration sections
  */
-import { website_port, session_secret, mongodb_auth_url } from './config.json';
+import {
+  website_port,
+  session_secret,
+  mongodb_auth_url,
+} from './config.json';
 
 /**
  * App Variables
  */
 const app: Application = express();
-const oneDay = 1000 * 60 * 60 * 24;
 
 /**
  * Database connection
  */
-
 mongoose.Promise = global.Promise;
 mongoose.set('strictQuery', false);
-mongoose.connect(mongodb_auth_url).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
+mongoose.connect(mongodb_auth_url, { keepAlive: true, keepAliveInitialDelay: 300000 }).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
 
 /**
  * App Configuration
  */
+app.disable('x-powered-by');
 app.use(express.json());
 app.use(helmet());
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
 app.use(morgan('combined'));
+app.use(express.static(__dirname + '/public'));
 app.use(session({
   secret: session_secret,
-  saveUninitialized: true,
-  cookie: { maxAge: oneDay },
+  saveUninitialized: false,
+  cookie: { maxAge: 60000 },
   resave: false,
 }));
 app.use(
@@ -60,11 +64,14 @@ app.use(
     max: 60,
   })
 );
-app.disable('x-powered-by');
 
-
+/**
+ * Route definitions
+ */
 app.use('/products', router);
 
+registerAuthRoutes(app);
+registerUserRoutes(app);
 register(app);
 
 app.use('*', (req, res) => {

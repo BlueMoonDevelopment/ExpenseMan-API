@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import { Product } from '../models/Product';
+import { Product } from '../models/product.model';
 
 export const router = express.Router();
 
@@ -60,7 +60,7 @@ export const router = express.Router();
 router.get('/', function (req, res, next) {
     Product.find(function (err, products) {
         if (err) return next(err);
-        res.json(products);
+        res.status(200).json(products);
     });
 });
 
