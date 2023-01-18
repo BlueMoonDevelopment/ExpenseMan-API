@@ -3,7 +3,7 @@
     "target": "es6",                               
     "module": "commonjs",                           
     "outDir": "./",                             
-    "rootDirs": ["./", "./views/backend/"],                             
+    "rootDirs": ["./"],                             
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -11,6 +11,7 @@
   },
   "exclude":[
     "./node_modules",
-    "./public"
+    "./public",
+    "./openapi-docs"
   ]
 }
