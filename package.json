@@ -9,7 +9,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "swagger-node.js-rest-api-doc"
+        "url": "https://github.com/BlueMoonDevelopment/ExpenseMan-API.git"
     },
     "author": "BlueMoonDevelopment",
     "contributors": [
