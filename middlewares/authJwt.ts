@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { jwt_secret } from '../config/config.json';
-import { IGetUserIdRequest } from '../definitions/def';
+import { jwt_secret } from '../config.json';
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers['x-access-token'] as string;
@@ -14,7 +13,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
         if (err) {
             return res.status(401).send({ message: 'Unauthorized!' });
         }
-        // req.userId = (decoded as IgetJwtPayload).id;
+        // req.userId = decoded.id;
         next();
     });
 };
