@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 import { User } from '../models/user.model';
-import { jwt_secret } from '../config/config.json';
+import { jwt_secret } from '../config.json';
 import { Request, Response } from 'express';
 
 

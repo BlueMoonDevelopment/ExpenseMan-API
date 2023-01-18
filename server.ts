@@ -26,7 +26,7 @@ import {
   website_port,
   session_secret,
   mongodb_auth_url,
-} from './config/config.json';
+} from './config.json';
 
 /**
  * App Variables
