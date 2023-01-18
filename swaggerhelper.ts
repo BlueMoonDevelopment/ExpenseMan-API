@@ -2,6 +2,7 @@ import { Application } from 'express';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
+
 const options: swaggerJSDoc.OAS3Options = {
     swaggerDefinition: {
         openapi: '3.0.0',
@@ -14,6 +15,7 @@ const options: swaggerJSDoc.OAS3Options = {
                 url: 'https://www.gnu.org/licenses/gpl-3.0.en.html',
             },
         },
+        basePath: '/',
     },
     apis: [
         `${__dirname}/swaggerhelper.ts`,
