@@ -60,7 +60,7 @@ export const router = express.Router();
 router.get('/', function (req, res, next) {
     Product.find(function (err, products) {
         if (err) return next(err);
-        res.json(products);
+        res.status(200).json(products);
     });
 });
 
