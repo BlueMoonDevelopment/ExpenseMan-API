@@ -7,8 +7,10 @@ import ratelimit from 'express-rate-limit';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
-import morgan, { StreamOptions } from 'morgan';
+import morgan from 'morgan';
 import mongoose from 'mongoose';
+
+import { router } from './routes/products';
 
 
 /**
@@ -28,7 +30,7 @@ const app: Application = express();
 const oneDay = 1000 * 60 * 60 * 24;
 
 const ads = [
-  { title: 'Hello, world (again)!' }
+  { title: 'Hello, world (again)!' },
 ];
 
 /**
@@ -51,20 +53,24 @@ app.use(session({
   secret: session_secret,
   saveUninitialized: true,
   cookie: { maxAge: oneDay },
-  resave: false
+  resave: false,
 }));
 app.use(
   ratelimit({
-    windowMs: 60 * 1000, // 1 minute
-    max: 60, // 60 calls
+    // 1 minute
+    windowMs: 60 * 1000,
+    // 60 calls
+    max: 60,
   })
 );
-app.disable("x-powered-by");
+app.disable('x-powered-by');
 
 
 app.get('/', (req, res) => {
   res.send(ads);
 });
+
+app.use('/products', router);
 
 
 /**
