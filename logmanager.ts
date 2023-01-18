@@ -26,3 +26,8 @@ export function error(msg: string): void {
     console.log(`[ERROR] ${msg}`);
 }
 
+export function errorWithError(msg: string, err: Error): void {
+    console.log(`[ERROR] ${msg}`);
+    console.error(err);
+}
+

@@ -8,17 +8,18 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan, { StreamOptions } from 'morgan';
+import mongoose from 'mongoose';
 
 
 /**
  * Required internal modules
  */
-import { info } from './logmanager';
+import { info, errorWithError } from './logmanager';
 
 /**
  * Required configuration sections
  */
-import { website_port, session_secret } from './config.json';
+import { website_port, session_secret, mongodb_auth_url } from './config.json';
 
 /**
  * App Variables
@@ -27,8 +28,16 @@ const app: Application = express();
 const oneDay = 1000 * 60 * 60 * 24;
 
 const ads = [
-    {title: 'Hello, world (again)!'}
-  ];
+  { title: 'Hello, world (again)!' }
+];
+
+/**
+ * Database connection
+ */
+
+mongoose.Promise = global.Promise;
+mongoose.set('strictQuery', false);
+mongoose.connect(mongodb_auth_url).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
 
 /**
  * App Configuration
@@ -39,10 +48,10 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
 app.use(session({
-    secret: session_secret,
-    saveUninitialized: true,
-    cookie: { maxAge: oneDay },
-    resave: false
+  secret: session_secret,
+  saveUninitialized: true,
+  cookie: { maxAge: oneDay },
+  resave: false
 }));
 app.use(
   ratelimit({
@@ -54,13 +63,13 @@ app.disable("x-powered-by");
 
 
 app.get('/', (req, res) => {
-    res.send(ads);
-  });
+  res.send(ads);
+});
 
 
 /**
  * Server Activation
  */
 app.listen(website_port, () => {
-    info(`Listening to requests at 127.0.0.1:${website_port}`);
+  info(`Listening to requests at 127.0.0.1:${website_port}`);
 });
