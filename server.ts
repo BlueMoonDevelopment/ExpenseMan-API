@@ -22,7 +22,11 @@ import { info, errorWithError } from './logmanager';
 /**
  * Required configuration sections
  */
-import { website_port, session_secret, mongodb_auth_url } from './config.json';
+import {
+  website_port,
+  session_secret,
+  mongodb_auth_url,
+} from './config.json';
 
 /**
  * App Variables
@@ -36,7 +40,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 
 mongoose.Promise = global.Promise;
 mongoose.set('strictQuery', false);
-mongoose.connect(mongodb_auth_url).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
+mongoose.connect(mongodb_auth_url, { keepAlive: true, keepAliveInitialDelay: 300000 }).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
 
 /**
  * App Configuration
@@ -44,7 +48,7 @@ mongoose.connect(mongodb_auth_url).then(() => info('Connected to mongodb')).catc
 app.use(express.json());
 app.use(helmet());
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
 app.use(morgan('combined'));
 app.use(session({
   secret: session_secret,
@@ -61,7 +65,6 @@ app.use(
   })
 );
 app.disable('x-powered-by');
-
 
 app.use('/products', router);
 
