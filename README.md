@@ -1,4 +1,4 @@
-# First Installation
+# First Installation [![Node.js CI](https://github.com/BlueMoonDevelopment/ExpenseMan-API/actions/workflows/npm.yml/badge.svg)](https://github.com/BlueMoonDevelopment/ExpenseMan-API/actions/workflows/npm.yml)
 NPM, NodeJS and PM2 need to be installed.
 On First startup, run <br>
   `npm install`<br>
