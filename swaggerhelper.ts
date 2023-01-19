@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 const options: swaggerJSDoc.OAS3Options = {
     swaggerDefinition: {
         openapi: '3.0.0',
+        basePath: '/',
         info: {
             title: 'ExpenseMan API',
             description: '## The official JSON API for ExpenseMan',
@@ -15,7 +16,16 @@ const options: swaggerJSDoc.OAS3Options = {
                 url: 'https://www.gnu.org/licenses/gpl-3.0.en.html',
             },
         },
-        basePath: '/',
+        servers: [
+            {
+                url: 'http://127.0.0.1:8083',
+                description: 'Development server',
+            },
+            {
+                url: 'https://api.expenseman.app',
+                description: 'Production server',
+            },
+        ],
     },
     apis: [
         `${__dirname}/swaggerhelper.ts`,

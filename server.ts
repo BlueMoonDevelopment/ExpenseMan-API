@@ -9,6 +9,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import passport from 'passport';
 
 /**
  * Required internal modules
@@ -47,7 +48,7 @@ app.disable('x-powered-by');
 app.use(express.json());
 app.use(helmet());
 app.use(bodyParser.json());
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors({ origin: '*' }));
 app.use(morgan('combined'));
 app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
 app.use(express.static(__dirname + '/public'));
@@ -70,6 +71,13 @@ app.use(function (req, res, next) {
   );
   next();
 });
+
+/**
+ * Passport Configuration
+ */
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 /**
  * Route definitions
