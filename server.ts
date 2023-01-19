@@ -50,20 +50,17 @@ app.use(bodyParser.json());
 app.use(cors({ credentials: true, origin: true }));
 app.use(morgan('combined'));
 app.use(express.static(__dirname + '/public'));
+// Setup session
 app.use(session({
   secret: session_secret,
   saveUninitialized: false,
   cookie: { maxAge: 60000 },
   resave: false,
 }));
-app.use(
-  ratelimit({
-    // 1 minute
-    windowMs: 60 * 1000,
-    // 60 calls
-    max: 60,
-  })
-);
+// Setup rate limit
+app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
+// Setup header too allow access-token
+
 app.use(function (req, res, next) {
   res.header(
     'Access-Control-Allow-Headers',
@@ -81,8 +78,9 @@ registerUserRoutes(app);
 
 registerSwaggerUI(app);
 
-app.use('*', (req, res) => {
-  res.send('404 Not found');
+// 404 Error, has to be called last (after all other pages)
+app.use(function (req, res) {
+  res.status(404).send('404 Not found');
 });
 
 
