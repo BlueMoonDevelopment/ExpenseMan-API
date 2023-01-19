@@ -12,6 +12,8 @@ export const signup = (req: Request, res: Response) => {
         password: bcrypt.hashSync(req.body.password, 8),
     });
 
+    console.log(req.ip);
+
     user.save((err) => {
         if (err) {
             res.status(500).send({ message: err });
@@ -23,6 +25,8 @@ export const signup = (req: Request, res: Response) => {
 };
 
 export const signin = (req: Request, res: Response) => {
+    console.log(req.ip);
+
     User.findOne({
         email: req.body.email,
     })
