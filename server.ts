@@ -14,10 +14,10 @@ import mongoose from 'mongoose';
  * Required internal modules
  */
 import { info, errorWithError } from './logmanager';
-import { register } from './swaggerhelper';
+import { registerSwaggerUI } from './swaggerhelper';
 import { registerUserRoutes } from './routes/user.routes';
 import { registerAuthRoutes } from './routes/auth.routes';
-import { router } from './routes/products.routes';
+import { registerProductRoutes } from './routes/products.routes';
 
 /**
  * Required configuration sections
@@ -64,15 +64,22 @@ app.use(
     max: 60,
   })
 );
+app.use(function (req, res, next) {
+  res.header(
+    'Access-Control-Allow-Headers',
+    'x-access-token, Origin, Content-Type, Accept'
+  );
+  next();
+});
 
 /**
  * Route definitions
  */
-app.use('/products', router);
-
+registerProductRoutes(app);
 registerAuthRoutes(app);
 registerUserRoutes(app);
-register(app);
+
+registerSwaggerUI(app);
 
 app.use('*', (req, res) => {
   res.send('404 Not found');
