@@ -15,6 +15,10 @@ import mongoose from 'mongoose';
  */
 import { info, errorWithError } from './logmanager';
 import { registerSwaggerUI } from './swaggerhelper';
+
+/**
+ * Required routes
+ */
 import { registerUserRoutes } from './routes/user.routes';
 import { registerAuthRoutes } from './routes/auth.routes';
 import { registerProductRoutes } from './routes/products.routes';
@@ -22,11 +26,7 @@ import { registerProductRoutes } from './routes/products.routes';
 /**
  * Required configuration sections
  */
-import {
-  website_port,
-  session_secret,
-  mongodb_auth_url,
-} from './config.json';
+import { website_port, session_secret, mongodb_auth_url } from './config.json';
 
 /**
  * App Variables
@@ -49,18 +49,20 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(cors({ credentials: true, origin: true }));
 app.use(morgan('combined'));
+app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
 app.use(express.static(__dirname + '/public'));
-// Setup session
+
+/**
+ * Session Configuration
+ */
 app.use(session({
   secret: session_secret,
   saveUninitialized: false,
   cookie: { maxAge: 60000 },
   resave: false,
 }));
-// Setup rate limit
-app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
-// Setup header too allow access-token
 
+// Setup header too allow access-token
 app.use(function (req, res, next) {
   res.header(
     'Access-Control-Allow-Headers',
