@@ -16,16 +16,6 @@ const options: swaggerJSDoc.OAS3Options = {
                 url: 'https://www.gnu.org/licenses/gpl-3.0.en.html',
             },
         },
-        servers: [
-            {
-                url: 'http://127.0.0.1:8083',
-                description: 'Development server',
-            },
-            {
-                url: 'https://api.expenseman.app',
-                description: 'Production server',
-            },
-        ],
     },
     apis: [
         `${__dirname}/swaggerhelper.ts`,
