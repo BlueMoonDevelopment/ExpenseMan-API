@@ -9,7 +9,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import passport from 'passport';
 
 /**
  * Required internal modules
@@ -52,6 +51,8 @@ app.use(cors({ origin: '*' }));
 app.use(morgan('combined'));
 app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
 app.use(express.static(__dirname + '/public'));
+app.set('trust proxy', true);
+app.set('view engine', 'ejs');
 
 /**
  * Session Configuration
@@ -71,13 +72,6 @@ app.use(function (req, res, next) {
   );
   next();
 });
-
-/**
- * Passport Configuration
- */
-app.use(passport.initialize());
-app.use(passport.session());
-
 
 /**
  * Route definitions
