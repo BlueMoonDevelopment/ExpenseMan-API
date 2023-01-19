@@ -9,24 +9,25 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import passport from 'passport';
 
 /**
  * Required internal modules
  */
 import { info, errorWithError } from './logmanager';
-import { register } from './swaggerhelper';
+import { registerSwaggerUI } from './swaggerhelper';
+
+/**
+ * Required routes
+ */
 import { registerUserRoutes } from './routes/user.routes';
 import { registerAuthRoutes } from './routes/auth.routes';
-import { router } from './routes/products.routes';
+import { registerProductRoutes } from './routes/products.routes';
 
 /**
  * Required configuration sections
  */
-import {
-  website_port,
-  session_secret,
-  mongodb_auth_url,
-} from './config.json';
+import { website_port, session_secret, mongodb_auth_url } from './config.json';
 
 /**
  * App Variables
@@ -47,35 +48,49 @@ app.disable('x-powered-by');
 app.use(express.json());
 app.use(helmet());
 app.use(bodyParser.json());
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors({ origin: '*' }));
 app.use(morgan('combined'));
+app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
 app.use(express.static(__dirname + '/public'));
+
+/**
+ * Session Configuration
+ */
 app.use(session({
   secret: session_secret,
   saveUninitialized: false,
   cookie: { maxAge: 60000 },
   resave: false,
 }));
-app.use(
-  ratelimit({
-    // 1 minute
-    windowMs: 60 * 1000,
-    // 60 calls
-    max: 60,
-  })
-);
+
+// Setup header too allow access-token
+app.use(function (req, res, next) {
+  res.header(
+    'Access-Control-Allow-Headers',
+    'x-access-token, Origin, Content-Type, Accept'
+  );
+  next();
+});
+
+/**
+ * Passport Configuration
+ */
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 /**
  * Route definitions
  */
-app.use('/products', router);
-
+registerProductRoutes(app);
 registerAuthRoutes(app);
 registerUserRoutes(app);
-register(app);
 
-app.use('*', (req, res) => {
-  res.send('404 Not found');
+registerSwaggerUI(app);
+
+// 404 Error, has to be called last (after all other pages)
+app.use(function (req, res) {
+  res.status(404).send('404 Not found');
 });
 
 
