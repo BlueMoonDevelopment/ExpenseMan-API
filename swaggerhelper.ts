@@ -38,7 +38,7 @@ const spec = swaggerJSDoc.default(options);
  *      200:
  *        description: "Successful Response"
  */
-export function register(app: Application) {
+export function registerSwaggerUI(app: Application) {
     app.use('/', swaggerUi.serve, swaggerUi.setup(spec));
 }
 
