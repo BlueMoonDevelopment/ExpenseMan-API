@@ -1,8 +1,6 @@
-import express from 'express';
+import { Application } from 'express';
 import mongoose from 'mongoose';
 import { Product } from '../models/product.model';
-
-export const router = express.Router();
 
 /* GET ALL PRODUCTS */
 /**
@@ -57,12 +55,14 @@ export const router = express.Router();
  *                   updated_at: "2023-01-18T09:54:25.790Z"
  *                   __v: 0
  */
-router.get('/', function (req, res, next) {
-    Product.find(function (err, products) {
-        if (err) return next(err);
-        res.status(200).json(products);
+function registerGetAllProducts(app: Application) {
+    app.get('/products', function (req, res, next) {
+        Product.find(function (err, products) {
+            if (err) return next(err);
+            res.status(200).json(products);
+        });
     });
-});
+}
 
 /* GET SINGLE PRODUCT BY ID */
 /**
@@ -117,12 +117,14 @@ router.get('/', function (req, res, next) {
  *               updated_at: "2023-01-18T09:54:25.790Z"
  *               __v: 0
  */
-router.get('/:id', function (req, res, next) {
-    Product.findById(mongoose.Types.ObjectId.createFromHexString(req.params.id), function (err: mongoose.CallbackError, post: mongoose.Document) {
-        if (err) return next(err);
-        res.json(post);
+function registerGetSingleProduct(app: Application) {
+    app.get('/products/:id', function (req, res, next) {
+        Product.findById(mongoose.Types.ObjectId.createFromHexString(req.params.id), function (err: mongoose.CallbackError, post: mongoose.Document) {
+            if (err) return next(err);
+            res.json(post);
+        });
     });
-});
+}
 
 /* SAVE PRODUCT */
 /**
@@ -192,12 +194,14 @@ router.get('/:id', function (req, res, next) {
  *               __v: 0
  *           description: "Implements the JSON response model for the /products endpoint."
  */
-router.post('/', function (req, res, next) {
-    Product.create(req.body, function (err: mongoose.CallbackError, post: mongoose.Document) {
-        if (err) return next(err);
-        res.json(post);
+function registerCreateProduct(app: Application) {
+    app.post('/products/', function (req, res, next) {
+        Product.create(req.body, function (err: mongoose.CallbackError, post: mongoose.Document) {
+            if (err) return next(err);
+            res.json(post);
+        });
     });
-});
+}
 
 /* UPDATE PRODUCT */
 /**
@@ -271,12 +275,14 @@ router.post('/', function (req, res, next) {
  *               __v: 0
  *           description: "Implements the JSON response model for the /products endpoint."
  */
-router.put('/:id', function (req, res, next) {
-    Product.findByIdAndUpdate(mongoose.Types.ObjectId.createFromHexString(req.params.id), req.body, function (err: mongoose.CallbackError, post: mongoose.Document) {
-        if (err) return next(err);
-        res.json(post);
+function registerUpdateProduct(app: Application) {
+    app.put('/products/:id', function (req, res, next) {
+        Product.findByIdAndUpdate(mongoose.Types.ObjectId.createFromHexString(req.params.id), req.body, function (err: mongoose.CallbackError, post: mongoose.Document) {
+            if (err) return next(err);
+            res.json(post);
+        });
     });
-});
+}
 
 /* DELETE PRODUCT */
 /**
@@ -302,9 +308,23 @@ router.put('/:id', function (req, res, next) {
  *         content:
  *           null
  */
-router.delete('/:id', function (req, res, next) {
-    Product.findByIdAndRemove(mongoose.Types.ObjectId.createFromHexString(req.params.id), req.body, function (err, post) {
-        if (err) return next(err);
-        res.json(post);
+function registerDeleteProduct(app: Application) {
+    app.delete('/products/:id', function (req, res, next) {
+        Product.findByIdAndRemove(mongoose.Types.ObjectId.createFromHexString(req.params.id), req.body, function (err, post) {
+            if (err) return next(err);
+            res.json(post);
+        });
     });
-});
+}
+
+/**
+ * Registers all routes
+ * @param app
+ */
+export function registerProductRoutes(app: Application) {
+    registerGetAllProducts(app);
+    registerGetSingleProduct(app);
+    registerCreateProduct(app);
+    registerUpdateProduct(app);
+    registerDeleteProduct(app);
+}
