@@ -37,6 +37,11 @@ export const signup = (req: Request, res: Response) => {
             return;
         }
 
+        const token = jwt.sign({ id: user.id }, jwt_secret, {
+            // 24 hours
+            expiresIn: 86400,
+        });
+        res.status(200).send({ accessToken: token });
         res.status(200).send({ message: 'User was registered successfully!' });
     });
 };
