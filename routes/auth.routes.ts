@@ -1,4 +1,4 @@
-import { signup, signin, checkUser } from '../controllers/auth.controller';
+import { signup, signin, checkUser, checkToken } from '../controllers/auth.controller';
 import { verifySignUp } from '../middlewares/verifySignUp';
 import { Application } from 'express';
 
@@ -23,8 +23,16 @@ function registerCheckUser(app: Application) {
     });
 }
 
+function registerCheckTokenAndId(app: Application) {
+    app.post('/auth/checktoken', checkToken);
+    app.get('/auth/checktoken', (req, res) => {
+        res.status(403).send({ message: 'Not accessable through browser!' });
+    });
+}
+
 export function registerAuthRoutes(app: Application) {
     registerAuthSignup(app);
     registerAuthSignIn(app);
     registerCheckUser(app);
+    registerCheckTokenAndId(app);
 }
