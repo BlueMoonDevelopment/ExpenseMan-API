@@ -6,7 +6,7 @@ import { jwt_secret } from '../config.json';
 import { Request, Response } from 'express';
 
 export const checkUser = (req: Request, res: Response) => {
-    User.findOne({ email: req.body.email }).exec((err, user) => {
+    User.findOne({ email: req.body.email.toLowerCase() }).exec((err, user) => {
         if (err) {
             res.status(500).send({ message: err });
             return;
@@ -25,7 +25,7 @@ export const checkUser = (req: Request, res: Response) => {
 
 export const signup = (req: Request, res: Response) => {
     const user = new User({
-        email: req.body.email,
+        email: req.body.email.toLowerCase(),
         password: bcrypt.hashSync(req.body.password, 8),
     });
 
@@ -45,7 +45,7 @@ export const signin = (req: Request, res: Response) => {
     console.log(req.ip);
 
     User.findOne({
-        email: req.body.email,
+        email: req.body.email.toLowerCase(),
     })
         .exec((err, user) => {
             if (err) {
