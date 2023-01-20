@@ -41,7 +41,7 @@ export const signup = (req: Request, res: Response) => {
             // 24 hours
             expiresIn: 86400,
         });
-        res.status(200).send({ accessToken: token, userId: user.id });
+        res.status(200).send({ accessToken: token, id: user.id });
     });
 };
 
