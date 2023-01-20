@@ -23,6 +23,27 @@ export const checkUser = (req: Request, res: Response) => {
     });
 };
 
+export const checkToken = (req: Request, res: Response) => {
+    const id = req.body.id;
+    const tok = req.body.accessToken;
+
+    User.findById(id).exec((err, user) => {
+        if (err) {
+            res.status(404).send({ message: 'User does not exist' });
+            return;
+        }
+
+        if (user && jwt.verify(tok, jwt_secret)) {
+
+            res.status(200).send({ matching: true });
+
+        } else {
+            res.status(200).send({ matching: false });
+        }
+    });
+
+};
+
 export const signup = (req: Request, res: Response) => {
     const user = new User({
         email: req.body.email,
