@@ -5,6 +5,23 @@ import { User } from '../models/user.model';
 import { jwt_secret } from '../config.json';
 import { Request, Response } from 'express';
 
+export const checkUser = (req: Request, res: Response) => {
+    User.findOne({ email: req.body.email }).exec((err, user) => {
+        if (err) {
+            res.status(500).send({ message: err });
+            return;
+        }
+
+        if (!user) {
+            return res.status(200).send({ exists: false });
+        } else {
+            return res.status(200).send({
+                exists: true,
+                _id: user._id,
+            });
+        }
+    });
+};
 
 export const signup = (req: Request, res: Response) => {
     const user = new User({
@@ -20,7 +37,7 @@ export const signup = (req: Request, res: Response) => {
             return;
         }
 
-        res.send({ message: 'User was registered successfully!' });
+        res.status(200).send({ message: 'User was registered successfully!' });
     });
 };
 
