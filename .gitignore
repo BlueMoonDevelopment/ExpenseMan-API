@@ -1,5 +1,6 @@
 #stuff to ignore:
 config.json
+.idea
 
 # Logs
 logs
