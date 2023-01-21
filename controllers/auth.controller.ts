@@ -29,7 +29,7 @@ export const checkToken = (req: Request, res: Response) => {
 
     User.findById(id).exec((err, user) => {
         if (err) {
-            res.status(404).send({ message: 'User does not exist' });
+            res.status(200).send({ message: 'User does not exist' });
             return;
         }
 
@@ -73,7 +73,7 @@ export const signin = (req: Request, res: Response) => {
             }
 
             if (!user) {
-                return res.status(404).send({ message: 'User Not found.' });
+                return res.status(200).send({ message: 'User Not found.' });
             }
 
             if (!user.password) {
@@ -87,7 +87,7 @@ export const signin = (req: Request, res: Response) => {
             );
 
             if (!passwordIsValid) {
-                return res.status(401).send({
+                return res.status(200).send({
                     accessToken: null,
                     message: 'Invalid Password!',
                 });
