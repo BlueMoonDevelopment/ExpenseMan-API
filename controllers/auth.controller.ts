@@ -34,9 +34,7 @@ export const checkToken = (req: Request, res: Response) => {
         }
 
         if (user && jwt.verify(tok, jwt_secret)) {
-
             res.status(200).send({ matching: true });
-
         } else {
             res.status(200).send({ matching: false });
         }
@@ -49,8 +47,6 @@ export const signup = (req: Request, res: Response) => {
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 8),
     });
-
-    console.log(req.ip);
 
     user.save((err) => {
         if (err) {
@@ -67,8 +63,6 @@ export const signup = (req: Request, res: Response) => {
 };
 
 export const signin = (req: Request, res: Response) => {
-    console.log(req.ip);
-
     User.findOne({
         email: req.body.email,
     })
