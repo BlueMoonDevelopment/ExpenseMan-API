@@ -8,14 +8,14 @@ import { Request, Response } from 'express';
 export const checkUser = (req: Request, res: Response) => {
     User.findOne({ email: req.body.email }).exec((err, user) => {
         if (err) {
-            res.status(500).send({ message: err });
+            res.send({ message: err });
             return;
         }
 
         if (!user) {
-            return res.status(200).send({ exists: false });
+            return res.send({ exists: false });
         } else {
-            return res.status(200).send({
+            return res.send({
                 exists: true,
                 _id: user._id,
             });
@@ -29,14 +29,14 @@ export const checkToken = (req: Request, res: Response) => {
 
     User.findById(id).exec((err, user) => {
         if (err) {
-            res.status(200).send({ message: 'User does not exist' });
+            res.send({ message: 'User does not exist' });
             return;
         }
 
         if (user && jwt.verify(tok, jwt_secret)) {
-            res.status(200).send({ matching: true });
+            res.send({ matching: true });
         } else {
-            res.status(200).send({ matching: false });
+            res.send({ matching: false });
         }
     });
 
@@ -50,7 +50,7 @@ export const signup = (req: Request, res: Response) => {
 
     user.save((err) => {
         if (err) {
-            res.status(500).send({ message: err });
+            res.send({ message: err });
             return;
         }
 
@@ -58,7 +58,7 @@ export const signup = (req: Request, res: Response) => {
             // 24 hours
             expiresIn: 86400,
         });
-        res.status(200).send({ accessToken: token, id: user.id });
+        res.send({ accessToken: token, id: user.id });
     });
 };
 
@@ -68,16 +68,16 @@ export const signin = (req: Request, res: Response) => {
     })
         .exec((err, user) => {
             if (err) {
-                res.status(500).send({ message: err });
+                res.send({ message: err });
                 return;
             }
 
             if (!user) {
-                return res.status(200).send({ message: 'User Not found.' });
+                return res.send({ message: 'User Not found.' });
             }
 
             if (!user.password) {
-                res.status(500).send({ message: err });
+                res.send({ message: err });
                 return;
             }
 
@@ -87,7 +87,7 @@ export const signin = (req: Request, res: Response) => {
             );
 
             if (!passwordIsValid) {
-                return res.status(200).send({
+                return res.send({
                     accessToken: null,
                     message: 'Invalid Password!',
                 });
@@ -99,7 +99,7 @@ export const signin = (req: Request, res: Response) => {
             });
 
 
-            res.status(200).send({
+            res.send({
                 id: user._id,
                 email: user.email,
                 accessToken: token,
