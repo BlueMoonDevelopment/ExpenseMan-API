@@ -88,7 +88,6 @@ export const signin = (req: Request, res: Response) => {
 
             if (!passwordIsValid) {
                 return res.send({
-                    accessToken: null,
                     message: 'Invalid Password!',
                 });
             }
