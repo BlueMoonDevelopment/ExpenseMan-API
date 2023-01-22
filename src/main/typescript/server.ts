@@ -13,7 +13,7 @@ import mongoose from 'mongoose';
 /**
  * Required internal modules
  */
-import { info, errorWithError } from './logmanager';
+import { info, errorWithError } from './tools/logmanager';
 import { registerSwaggerUI } from './swaggerhelper';
 
 /**
@@ -32,6 +32,7 @@ import { website_port, session_secret, mongodb_auth_url } from './config.json';
  * App Variables
  */
 const app: Application = express();
+export const rootPath = __dirname;
 
 /**
  * Database connection
