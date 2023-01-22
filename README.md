@@ -20,4 +20,3 @@ Also you should setup an Apache2 Webserver and Proxy the NodeJS Server to that.
 [NodeJS documentation](https://nodejs.org/en/docs/guides/)<br>
 [Express.JS documentation](https://expressjs.com/guide/routing.html)<br>
 [Swagger documentation](https://swagger.io/docs/specification/describing-request-body/)<br>
-[Authentication documentation](https://www.bezkoder.com/node-js-mongodb-auth-jwt/)
