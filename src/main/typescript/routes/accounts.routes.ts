@@ -179,7 +179,7 @@ function registerGetAccountsFromUser(app: Application) {
  */
 function registerCreateAccount(app: Application) {
     app.post('/accounts', authJwt.verifyToken, async (req, res, next) => {
-        const id = req.body.id;
+        const id = sanitize(req.body.id);
         const limit = account_settings.account_limit;
         const accounts = await Account.find({ user_id: id }).exec();
 
