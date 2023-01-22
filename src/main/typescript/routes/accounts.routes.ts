@@ -208,7 +208,22 @@ function registerCreateAccount(app: Application) {
     });
 }
 
+function registerDeleteAccount(app: Application) {
+    app.delete('/accounts', authJwt.verifyToken, function (req, res, next) {
+        const id = sanitize(req.body.id);
+        if (id != req.body.user_id) {
+            res.status(403).send({ message: 'You are not authorized to delete this account.' });
+            return;
+        }
+        Account.findByIdAndRemove(mongoose.Types.ObjectId.createFromHexString(req.body._id), sanitize(req.body), function (err, post) {
+            if (err) return next(err);
+            res.json(post);
+        });
+    });
+}
+
 export function registerAccountRoutes(app: Application) {
     registerGetAccountsFromUser(app);
     registerCreateAccount(app);
+    registerDeleteAccount(app);
 }
