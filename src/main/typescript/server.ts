@@ -2,7 +2,6 @@
  * Required external modules
  */
 import express, { Application } from 'express';
-import session from 'express-session';
 import ratelimit from 'express-rate-limit';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -13,7 +12,7 @@ import mongoose from 'mongoose';
 /**
  * Required internal modules
  */
-import { info, errorWithError } from './logmanager';
+import { info, errorWithError } from './tools/logmanager';
 import { registerSwaggerUI } from './swaggerhelper';
 
 /**
@@ -32,6 +31,7 @@ import { website_port, session_secret, mongodb_auth_url } from './config.json';
  * App Variables
  */
 const app: Application = express();
+export const rootPath = __dirname;
 
 /**
  * Database connection
@@ -56,16 +56,6 @@ app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
 app.use(express.static(__dirname + '/public'));
 app.set('trust proxy', true);
 app.set('view engine', 'ejs');
-
-/**
- * Session Configuration
- */
-app.use(session({
-    secret: session_secret,
-    saveUninitialized: false,
-    cookie: { maxAge: 60000 },
-    resave: false,
-}));
 
 // Setup header to allow access-token
 app.use(function (req, res, next) {

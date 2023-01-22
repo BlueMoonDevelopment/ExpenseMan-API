@@ -1,21 +1,22 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import sanitize from 'mongo-sanitize';
 
 import { User } from '../models/user.model';
 import { jwt_secret } from '../config.json';
 import { Request, Response } from 'express';
 
 export const checkUser = (req: Request, res: Response) => {
-    User.findOne({ email: req.body.email }).exec((err, user) => {
+    User.findOne({ email: sanitize(req.body.email) }).exec((err, user) => {
         if (err) {
-            res.send({ message: err });
+            res.status(500).send({ message: err });
             return;
         }
 
         if (!user) {
-            return res.send({ exists: false });
+            return res.status(200).send({ exists: false });
         } else {
-            return res.send({
+            return res.status(200).send({
                 exists: true,
                 _id: user._id,
             });
@@ -24,32 +25,32 @@ export const checkUser = (req: Request, res: Response) => {
 };
 
 export const checkToken = (req: Request, res: Response) => {
-    const id = req.body.id;
-    const tok = req.body.accessToken;
+    const id = sanitize(req.body.id);
+    const tok = sanitize(req.body.accessToken);
 
     User.findById(id).exec((err, user) => {
         if (err) {
-            res.send({ message: 'User does not exist' });
+            res.status(200).send({ matching: false });
             return;
         }
 
         if (user && jwt.verify(tok, jwt_secret)) {
-            res.send({ matching: true });
+            res.status(200).send({ matching: true });
         } else {
-            res.send({ matching: false });
+            res.status(200).send({ matching: false });
         }
     });
 };
 
 export const signup = (req: Request, res: Response) => {
     const user = new User({
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 8),
+        email: sanitize(req.body.email),
+        password: bcrypt.hashSync(sanitize(req.body.password), 8),
     });
 
     user.save((err) => {
         if (err) {
-            res.send({ message: err });
+            res.status(500).send({ message: err });
             return;
         }
 
@@ -57,36 +58,31 @@ export const signup = (req: Request, res: Response) => {
             // 24 hours
             expiresIn: 86400,
         });
-        res.send({ accessToken: token, id: user.id });
+        res.status(200).send({ accessToken: token, id: user.id });
     });
 };
 
 export const signin = (req: Request, res: Response) => {
     User.findOne({
-        email: req.body.email,
+        email: sanitize(req.body.email),
     })
         .exec((err, user) => {
             if (err) {
-                res.send({ message: err });
+                res.status(500).send({ message: err });
                 return;
             }
 
-            if (!user) {
-                return res.send({ message: 'User Not found.' });
-            }
-
-            if (!user.password) {
-                res.send({ message: err });
-                return;
+            if (!user || !user.password) {
+                return res.status(404).send({ message: 'User Not found.' });
             }
 
             const passwordIsValid = bcrypt.compareSync(
-                req.body.password,
+                sanitize(req.body.password),
                 user.password,
             );
 
             if (!passwordIsValid) {
-                return res.send({
+                return res.status(401).send({
                     message: 'Invalid Password!',
                 });
             }
@@ -96,11 +92,10 @@ export const signin = (req: Request, res: Response) => {
                 expiresIn: 86400,
             });
 
-            res.send({
+            res.status(200).send({
                 id: user._id,
                 email: user.email,
                 accessToken: token,
-                accounts: user.accounts,
             });
         });
 };

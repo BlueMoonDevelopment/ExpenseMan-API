@@ -1,16 +1,16 @@
 {
-  "compilerOptions": {                        
-    "target": "es6",                               
-    "module": "commonjs",                           
-    "outDir": "./",                             
-    "rootDirs": ["./"],                             
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./",
+    "rootDirs": ["./"],
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "resolveJsonModule": true,                       
+    "resolveJsonModule": true,
   },
   "exclude":[
     "./node_modules",
-    "./public"
+    "./src/main/typescript/public"
   ]
 }

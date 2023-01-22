@@ -6,19 +6,16 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers['x-access-token'] as string;
 
     if (!token) {
-        return res.send({ message: 'No token provided!' });
+        return res.status(401).send({ message: 'No token provided!' });
     }
 
     jwt.verify(token, jwt_secret, (err, decoded) => {
         if (err) {
-            return res.send({ message: 'Unauthorized!' });
+            return res.status(401).send({ message: 'Unauthorized!' });
         }
 
         const payload = decoded as JwtPayload;
-        if (payload) {
-            req.body.id = payload.id;
-            // console.log('UserID: ' + payload.id);
-        }
+        req.body.id = payload.id;
         next();
     });
 };
