@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { jwt_secret } from '../config.json';
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
@@ -13,7 +13,12 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
         if (err) {
             return res.send({ message: 'Unauthorized!' });
         }
-        // req.userId = decoded.id;
+
+        const payload = decoded as JwtPayload;
+        if (payload) {
+            req.body.id = payload.id;
+            // console.log('UserID: ' + payload.id);
+        }
         next();
     });
 };

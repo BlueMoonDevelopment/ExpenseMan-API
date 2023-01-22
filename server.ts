@@ -20,6 +20,7 @@ import { registerSwaggerUI } from './swaggerhelper';
  * Required routes
  */
 import { registerAuthRoutes } from './routes/auth.routes';
+import { registerAccountRoutes } from './routes/accounts.routes';
 import { registerProductRoutes } from './routes/products.routes';
 
 /**
@@ -37,7 +38,10 @@ const app: Application = express();
  */
 mongoose.Promise = global.Promise;
 mongoose.set('strictQuery', false);
-mongoose.connect(mongodb_auth_url, { keepAlive: true, keepAliveInitialDelay: 300000 }).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
+mongoose.connect(mongodb_auth_url, {
+    keepAlive: true,
+    keepAliveInitialDelay: 300000,
+}).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
 
 /**
  * App Configuration
@@ -57,32 +61,42 @@ app.set('view engine', 'ejs');
  * Session Configuration
  */
 app.use(session({
-  secret: session_secret,
-  saveUninitialized: false,
-  cookie: { maxAge: 60000 },
-  resave: false,
+    secret: session_secret,
+    saveUninitialized: false,
+    cookie: { maxAge: 60000 },
+    resave: false,
 }));
 
-// Setup header too allow access-token
+// Setup header to allow access-token
 app.use(function (req, res, next) {
-  res.header(
-    'Access-Control-Allow-Headers',
-    'x-access-token, Origin, Content-Type, Accept'
-  );
-  next();
+    res.header(
+        'Access-Control-Allow-Headers',
+        'x-access-token, Origin, Content-Type, Accept',
+    );
+    next();
 });
+
+/**
+ * Type definitions
+ */
+declare module 'jsonwebtoken' {
+    interface JwtPayload {
+        id: string;
+    }
+}
 
 /**
  * Route definitions
  */
-registerProductRoutes(app);
 registerAuthRoutes(app);
+registerAccountRoutes(app);
+registerProductRoutes(app);
 
 registerSwaggerUI(app);
 
 // 404 Error, has to be called last (after all other pages)
 app.use(function (req, res) {
-  res.status(404).send('404 Not found');
+    res.status(404).send('404 Not found');
 });
 
 
@@ -90,5 +104,5 @@ app.use(function (req, res) {
  * Server Activation
  */
 app.listen(website_port, () => {
-  info(`Listening to requests at 127.0.0.1:${website_port}`);
+    info(`Listening to requests at 127.0.0.1:${website_port}`);
 });
