@@ -1,6 +1,4 @@
 import mongoose from 'mongoose';
-import { AccountSchema } from './account.model';
-
 
 const UserSchema = new mongoose.Schema({
     email: {
@@ -12,7 +10,6 @@ const UserSchema = new mongoose.Schema({
         index: true,
     },
     password: String,
-    accounts: [AccountSchema],
 });
 
 export const User = mongoose.model('User', UserSchema);

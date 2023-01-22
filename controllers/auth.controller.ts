@@ -95,7 +95,6 @@ export const signin = (req: Request, res: Response) => {
                 id: user._id,
                 email: user.email,
                 accessToken: token,
-                accounts: user.accounts,
             });
         });
 };

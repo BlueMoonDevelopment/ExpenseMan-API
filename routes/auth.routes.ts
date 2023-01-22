@@ -2,6 +2,10 @@ import { signup, signin, checkUser, checkToken } from '../controllers/auth.contr
 import { verifySignUp } from '../middlewares/verifySignUp';
 import { Application } from 'express';
 
+/**
+ * Do NOT use Swagger for authentication API
+ */
+
 function registerAuthSignup(app: Application) {
     app.post('/auth/signup', verifySignUp.checkDuplicateEmail, signup);
     app.get('/auth/signup', (req, res) => {

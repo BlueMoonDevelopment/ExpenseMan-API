@@ -17,6 +17,7 @@ const options: swaggerJSDoc.OAS3Options = {
             },
         },
     },
+    failOnErrors: true,
     apis: [
         `${__dirname}/swaggerhelper.ts`,
         `${__dirname}/routes/*.ts`,
@@ -24,6 +25,10 @@ const options: swaggerJSDoc.OAS3Options = {
 };
 
 const spec = swaggerJSDoc.default(options);
+const customOptions = {
+    customSiteTitle: 'ExpenseMan - API',
+    customCss: '.swagger-ui .topbar { display: none }',
+};
 
 /**
  * @swagger
@@ -39,6 +44,6 @@ const spec = swaggerJSDoc.default(options);
  *        description: "Successful Response"
  */
 export function registerSwaggerUI(app: Application) {
-    app.use('/', swaggerUi.serve, swaggerUi.setup(spec));
+    app.use('/', swaggerUi.serve, swaggerUi.setup(spec, customOptions));
 }
 
