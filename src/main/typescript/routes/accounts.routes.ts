@@ -211,7 +211,7 @@ function registerCreateAccount(app: Application) {
 /**
  * @swagger
  * /accounts:
- *   post:
+ *   delete:
  *     tags:
  *     - "Account API"
  *     summary: "Delete an account"
