@@ -222,8 +222,23 @@ function registerDeleteAccount(app: Application) {
     });
 }
 
+function registerUpdateAccount(app: Application) {
+    app.put('/accounts', authJwt.verifyToken, function (req, res, next) {
+        const id = sanitize(req.body.id);
+        if (id != req.body.user_id) {
+            res.status(403).send({ message: 'You are not authorized to modify this account.' });
+            return;
+        }
+        Account.findByIdAndUpdate(mongoose.Types.ObjectId.createFromHexString(req.body._id), sanitize(req.body), function (err: mongoose.CallbackError, post: mongoose.Document) {
+            if (err) return next(err);
+            res.status(200).send({ message: 'Account modified successfully' });
+        });
+    });
+}
+
 export function registerAccountRoutes(app: Application) {
     registerGetAccountsFromUser(app);
     registerCreateAccount(app);
     registerDeleteAccount(app);
+    registerUpdateAccount(app);
 }
