@@ -1,5 +1,6 @@
 import { Application } from 'express';
 import mongoose from 'mongoose';
+import sanitize from 'mongo-sanitize';
 import { Product } from '../models/product.model';
 import { authJwt } from '../middlewares/authJwt';
 
@@ -203,7 +204,7 @@ function registerGetSingleProduct(app: Application) {
  */
 function registerCreateProduct(app: Application) {
     app.post('/products/', authJwt.verifyToken, function (req, res, next) {
-        Product.create(req.body, function (err: mongoose.CallbackError, post: mongoose.Document) {
+        Product.create(sanitize(req.body), function (err: mongoose.CallbackError, post: mongoose.Document) {
             if (err) return next(err);
             res.json(post);
         });
@@ -289,7 +290,7 @@ function registerCreateProduct(app: Application) {
  */
 function registerUpdateProduct(app: Application) {
     app.put('/products/:id', authJwt.verifyToken, function (req, res, next) {
-        Product.findByIdAndUpdate(mongoose.Types.ObjectId.createFromHexString(req.params.id), req.body, function (err: mongoose.CallbackError, post: mongoose.Document) {
+        Product.findByIdAndUpdate(mongoose.Types.ObjectId.createFromHexString(req.params.id), sanitize(req.body), function (err: mongoose.CallbackError, post: mongoose.Document) {
             if (err) return next(err);
             res.json(post);
         });
@@ -327,7 +328,7 @@ function registerUpdateProduct(app: Application) {
  */
 function registerDeleteProduct(app: Application) {
     app.delete('/products/:id', authJwt.verifyToken, function (req, res, next) {
-        Product.findByIdAndRemove(mongoose.Types.ObjectId.createFromHexString(req.params.id), req.body, function (err, post) {
+        Product.findByIdAndRemove(mongoose.Types.ObjectId.createFromHexString(req.params.id), sanitize(req.body), function (err, post) {
             if (err) return next(err);
             res.json(post);
         });

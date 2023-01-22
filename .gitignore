@@ -1,5 +1,5 @@
 #stuff to ignore:
-config.json
+src/main/typescript/config.json
 .idea
 
 # Logs
