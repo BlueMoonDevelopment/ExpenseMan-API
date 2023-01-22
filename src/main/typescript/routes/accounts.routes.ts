@@ -1,5 +1,6 @@
-import { Application, NextFunction } from 'express';
+import { Application } from 'express';
 import mongoose from 'mongoose';
+import sanitize from 'mongo-sanitize';
 
 import { authJwt } from '../middlewares/authJwt';
 import { Account } from '../models/account.model';
@@ -82,7 +83,7 @@ import { account_settings } from '../config.json';
  */
 function registerGetAccountsFromUser(app: Application) {
     app.get('/accounts', authJwt.verifyToken, async (req, res) => {
-        const id = req.body.id;
+        const id = sanitize(req.body.id);
         const accounts = await Account.find({ user_id: id }).exec();
         res.json(accounts);
     });
@@ -194,13 +195,13 @@ function registerCreateAccount(app: Application) {
 
         const data = {
             user_id: id,
-            account_name: req.body.account_name,
-            account_currency: req.body.account_currency,
-            account_desc: req.body.account_desc,
-            balance: req.body.balance,
+            account_name: sanitize(req.body.account_name),
+            account_currency: sanitize(req.body.account_currency),
+            account_desc: sanitize(req.body.account_desc),
+            balance: sanitize(req.body.balance),
         };
 
-        await Account.create(data, function (err: mongoose.CallbackError, post: mongoose.Document) {
+        await Account.create(data, function (err: mongoose.CallbackError) {
             if (err) return next(err);
             res.status(200).send({ message: 'Account creation was successful' });
         });

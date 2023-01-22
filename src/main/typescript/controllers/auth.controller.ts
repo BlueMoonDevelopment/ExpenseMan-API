@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import sanitize from 'mongo-sanitize';
 
 import { User } from '../models/user.model';
 import { jwt_secret } from '../config.json';
 import { Request, Response } from 'express';
 
 export const checkUser = (req: Request, res: Response) => {
-    User.findOne({ email: req.body.email }).exec((err, user) => {
+    User.findOne({ email: sanitize(req.body.email) }).exec((err, user) => {
         if (err) {
             res.status(500).send({ message: err });
             return;
@@ -24,8 +25,8 @@ export const checkUser = (req: Request, res: Response) => {
 };
 
 export const checkToken = (req: Request, res: Response) => {
-    const id = req.body.id;
-    const tok = req.body.accessToken;
+    const id = sanitize(req.body.id);
+    const tok = sanitize(req.body.accessToken);
 
     User.findById(id).exec((err, user) => {
         if (err) {
@@ -43,8 +44,8 @@ export const checkToken = (req: Request, res: Response) => {
 
 export const signup = (req: Request, res: Response) => {
     const user = new User({
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 8),
+        email: sanitize(req.body.email),
+        password: bcrypt.hashSync(sanitize(req.body.password), 8),
     });
 
     user.save((err) => {
@@ -63,7 +64,7 @@ export const signup = (req: Request, res: Response) => {
 
 export const signin = (req: Request, res: Response) => {
     User.findOne({
-        email: req.body.email,
+        email: sanitize(req.body.email),
     })
         .exec((err, user) => {
             if (err) {
@@ -71,13 +72,13 @@ export const signin = (req: Request, res: Response) => {
                 return;
             }
 
-            if (!user) {
+            if (!user || !user.password) {
                 return res.status(404).send({ message: 'User Not found.' });
             }
 
             const passwordIsValid = bcrypt.compareSync(
-                req.body.password,
-                user.password!,
+                sanitize(req.body.password),
+                user.password,
             );
 
             if (!passwordIsValid) {

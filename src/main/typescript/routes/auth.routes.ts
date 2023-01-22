@@ -1,6 +1,7 @@
 import { signup, signin, checkUser, checkToken } from '../controllers/auth.controller';
 import { verifySignUp } from '../middlewares/verifySignUp';
 import { Application } from 'express';
+import sanitize from 'mongo-sanitize';
 
 /**
  * Do NOT use Swagger for authentication API

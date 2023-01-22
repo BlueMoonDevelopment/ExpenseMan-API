@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models/user.model';
+import sanitize from 'mongo-sanitize';
 
 const checkDuplicateEmail = (req: Request, res: Response, next: NextFunction) => {
     // Email
     User.findOne({
-        email: req.body.email,
+        email: sanitize(req.body.email),
     }).exec((err, user) => {
         if (err) {
             res.status(500).send({ message: err });

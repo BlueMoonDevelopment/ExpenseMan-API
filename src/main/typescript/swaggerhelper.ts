@@ -1,8 +1,6 @@
 import { Application } from 'express';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { rootPath } from './server';
-
 
 const options: swaggerJSDoc.OAS3Options = {
     swaggerDefinition: {
