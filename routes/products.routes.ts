@@ -1,6 +1,7 @@
 import { Application } from 'express';
 import mongoose from 'mongoose';
 import { Product } from '../models/product.model';
+import { authJwt } from '../middlewares/authJwt';
 
 /* GET ALL PRODUCTS */
 /**
@@ -138,6 +139,12 @@ function registerGetSingleProduct(app: Application) {
  *     operationId: "products__post"
  *     consumes:
  *     - "application/json"
+ *     parameters:
+ *       - in: header
+ *         name: x-access-token
+ *         schema:
+ *           type: string
+ *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -195,7 +202,7 @@ function registerGetSingleProduct(app: Application) {
  *           description: "Implements the JSON response model for the /products endpoint."
  */
 function registerCreateProduct(app: Application) {
-    app.post('/products/', function (req, res, next) {
+    app.post('/products/', authJwt.verifyToken, function (req, res, next) {
         Product.create(req.body, function (err: mongoose.CallbackError, post: mongoose.Document) {
             if (err) return next(err);
             res.json(post);
@@ -221,6 +228,11 @@ function registerCreateProduct(app: Application) {
  *           type: "string"
  *         in: "path"
  *         example: "63c8046428d4331d75959db1"
+ *       - name: x-access-token
+ *         in: header
+ *         schema:
+ *           type: string
+ *         required: true
  *     consumes:
  *     - "application/json"
  *     requestBody:
@@ -276,7 +288,7 @@ function registerCreateProduct(app: Application) {
  *           description: "Implements the JSON response model for the /products endpoint."
  */
 function registerUpdateProduct(app: Application) {
-    app.put('/products/:id', function (req, res, next) {
+    app.put('/products/:id', authJwt.verifyToken, function (req, res, next) {
         Product.findByIdAndUpdate(mongoose.Types.ObjectId.createFromHexString(req.params.id), req.body, function (err: mongoose.CallbackError, post: mongoose.Document) {
             if (err) return next(err);
             res.json(post);
@@ -302,6 +314,11 @@ function registerUpdateProduct(app: Application) {
  *           type: "string"
  *         in: "path"
  *         example: "63c8046428d4331d75959db1"
+ *       - name: x-access-token
+ *         in: header
+ *         schema:
+ *           type: string
+ *         required: true
  *     responses:
  *       200:
  *         description: "Returns null when either product not existing or successful"
@@ -309,7 +326,7 @@ function registerUpdateProduct(app: Application) {
  *           null
  */
 function registerDeleteProduct(app: Application) {
-    app.delete('/products/:id', function (req, res, next) {
+    app.delete('/products/:id', authJwt.verifyToken, function (req, res, next) {
         Product.findByIdAndRemove(mongoose.Types.ObjectId.createFromHexString(req.params.id), req.body, function (err, post) {
             if (err) return next(err);
             res.json(post);
