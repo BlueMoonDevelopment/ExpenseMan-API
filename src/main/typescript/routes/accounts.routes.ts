@@ -217,7 +217,7 @@ function registerDeleteAccount(app: Application) {
         }
         Account.findByIdAndRemove(mongoose.Types.ObjectId.createFromHexString(req.body._id), sanitize(req.body), function (err, post) {
             if (err) return next(err);
-            res.json(post);
+            res.status(200).send({ message: 'Account deleted successfully' });
         });
     });
 }
