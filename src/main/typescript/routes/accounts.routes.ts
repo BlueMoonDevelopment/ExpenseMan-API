@@ -208,6 +208,77 @@ function registerCreateAccount(app: Application) {
     });
 }
 
+/**
+ * @swagger
+ * /accounts:
+ *   post:
+ *     tags:
+ *     - "Account API"
+ *     summary: "Delete an account"
+ *     description: "Delete an account"
+ *     operationId: "accounts__delete"
+ *     consumes:
+ *     - "application/json"
+ *     parameters:
+ *       - in: header
+ *         name: x-access-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: "object"
+ *             required:
+ *             - _id
+ *             - user_id
+ *             properties:
+ *               _id:
+ *                 type: "string"
+ *                 example: "63cdbc09a3adb6d82c13254a"
+ *               user_id:
+ *                 type: "string"
+ *                 example: "f343dfgj435jkgfn34dfdgdf"
+ *     responses:
+ *       200:
+ *         description: "Successful response"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Confirmation message"
+ *                   type: "string"
+ *             example:
+ *               message: "Account deleted successfully"
+ *       401:
+ *         description: "No token provided or token is wrong"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "No token provided!"
+ *       403:
+ *         description: "Not an authorized user"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "You are not authorized to delete this account."
+ */
 function registerDeleteAccount(app: Application) {
     app.delete('/accounts', authJwt.verifyToken, function (req, res, next) {
         const id = sanitize(req.body.id);
