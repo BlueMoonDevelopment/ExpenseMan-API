@@ -5,7 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 
 const options: swaggerJSDoc.OAS3Options = {
     swaggerDefinition: {
-        openapi: '3.0.0',
+        openapi: '3.0.1',
         basePath: '/',
         info: {
             title: 'ExpenseMan API',

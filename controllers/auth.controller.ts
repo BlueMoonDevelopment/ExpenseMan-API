@@ -96,11 +96,11 @@ export const signin = (req: Request, res: Response) => {
                 expiresIn: 86400,
             });
 
-
             res.send({
                 id: user._id,
                 email: user.email,
                 accessToken: token,
+                accounts: user.accounts,
             });
         });
 };
