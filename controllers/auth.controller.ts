@@ -39,7 +39,6 @@ export const checkToken = (req: Request, res: Response) => {
             res.send({ matching: false });
         }
     });
-
 };
 
 export const signup = (req: Request, res: Response) => {
