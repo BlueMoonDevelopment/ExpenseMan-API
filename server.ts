@@ -19,7 +19,6 @@ import { registerSwaggerUI } from './swaggerhelper';
 /**
  * Required routes
  */
-import { registerUserRoutes } from './routes/user.routes';
 import { registerAuthRoutes } from './routes/auth.routes';
 import { registerProductRoutes } from './routes/products.routes';
 
@@ -78,7 +77,6 @@ app.use(function (req, res, next) {
  */
 registerProductRoutes(app);
 registerAuthRoutes(app);
-registerUserRoutes(app);
 
 registerSwaggerUI(app);
 
