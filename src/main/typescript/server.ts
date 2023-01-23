@@ -20,12 +20,11 @@ import { registerSwaggerUI } from './swaggerhelper';
  */
 import { registerAuthRoutes } from './routes/auth.routes';
 import { registerAccountRoutes } from './routes/accounts.routes';
-import { registerProductRoutes } from './routes/products.routes';
 
 /**
  * Required configuration sections
  */
-import { website_port, session_secret, mongodb_auth_url } from './config.json';
+import { website_port, mongodb_auth_url } from './config.json';
 
 /**
  * App Variables
@@ -80,7 +79,6 @@ declare module 'jsonwebtoken' {
  */
 registerAuthRoutes(app);
 registerAccountRoutes(app);
-registerProductRoutes(app);
 
 registerSwaggerUI(app);
 
