@@ -299,9 +299,9 @@ function registerDeleteAccount(app: Application) {
  *   put:
  *     tags:
  *     - "Account API"
- *     summary: "Delete an account"
- *     description: "Delete an account"
- *     operationId: "accounts__delete"
+ *     summary: "Update an account"
+ *     description: "update an account"
+ *     operationId: "accounts__put"
  *     consumes:
  *     - "application/json"
  *     parameters:
