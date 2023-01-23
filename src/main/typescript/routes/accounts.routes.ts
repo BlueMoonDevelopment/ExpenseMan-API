@@ -6,15 +6,14 @@ import { authJwt } from '../middlewares/authJwt';
 import { Account } from '../models/account.model';
 import { account_settings } from '../config.json';
 
-
 /**
  * @swagger
  * /accounts:
  *   get:
  *     tags:
  *     - "Account API"
- *     description: Brings up all Accounts for your user
- *     summary: Get all accounts
+ *     description: Brings up all Accounts for your user if no account_id is specified, or single account
+ *     summary: Get accounts
  *     operationId: accounts__get
  *     parameters:
  *       - in: header
@@ -22,6 +21,16 @@ import { account_settings } from '../config.json';
  *         schema:
  *           type: string
  *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: "object"
+ *             properties:
+ *               account_id:
+ *                 type: "string"
+ *                 example: "63cdbc09a3adb6d82c13254a"
  *     responses:
  *       200:
  *         description: Successful Response
@@ -35,7 +44,7 @@ import { account_settings } from '../config.json';
  *                     _id:
  *                       title: "Account ID"
  *                       type: "string"
- *                     user_id:
+ *                     account_owner_id:
  *                       title: "Owning user ID"
  *                       type: "string"
  *                     account_name:
@@ -47,7 +56,7 @@ import { account_settings } from '../config.json';
  *                     account_desc:
  *                       title: "Account description"
  *                       type: "string"
- *                     balance:
+ *                     account_balance:
  *                       title: "Account balance"
  *                       type: "number"
  *                     __v:
@@ -55,18 +64,18 @@ import { account_settings } from '../config.json';
  *                       type: "integer"
  *                 example:
  *                 - _id: "63cd6f99810a1500c067a70a"
- *                   user_id: "63cd40b83391382af2ae71fb"
+ *                   account_owner_id: "63cd40b83391382af2ae71fb"
  *                   account_name: "Testaccount"
  *                   account_currency: "$"
  *                   account_desc: ""
- *                   balance: 0,
+ *                   account_balance: 0,
  *                   __v: 0
  *                 - _id: "63cd6fbf810a1500c067a70d"
- *                   user_id: "63cd40b83391382af2ae71fb"
+ *                   account_owner_id: "63cd40b83391382af2ae71fb"
  *                   account_name: "Testaccount 2"
  *                   account_currency: "€"
  *                   account_desc: "This is the second test account"
- *                   balance: 100,
+ *                   account_balance: 100,
  *                   __v: 0
  *       401:
  *         description: "No token provided or token is wrong"
@@ -80,12 +89,41 @@ import { account_settings } from '../config.json';
  *                   type: "string"
  *             example:
  *               message: "No token provided!"
+ *       404:
+ *         description: "Not found"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "Specified account_id not found."
  */
 function registerGetAccountsFromUser(app: Application) {
     app.get('/accounts', authJwt.verifyToken, async (req, res) => {
-        const id = sanitize(req.body.id);
-        const accounts = await Account.find({ user_id: id }).exec();
-        res.json(accounts);
+        try {
+            const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+
+            let accounts;
+
+            if (req.body.account_id) {
+                const account_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
+                accounts = await Account.find({ account_owner_id: user_id, _id: account_id }).exec();
+                if (accounts.length == 0) {
+                    res.status(404).send({ message: 'Specified account_id not found.' });
+                    return;
+                }
+            } else {
+                accounts = await Account.find({ account_owner_id: user_id }).exec();
+            }
+            res.json(accounts);
+        } catch (err) {
+            res.status(500).send({ message: `Unknown error occured: ${err}` });
+        }
+
     });
 }
 
@@ -124,7 +162,7 @@ function registerGetAccountsFromUser(app: Application) {
  *               account_desc:
  *                 type: "string"
  *                 example: "universal bank"
- *               balance:
+ *               account_balance:
  *                 type: "number"
  *                 example: 1134
  *     responses:
@@ -179,9 +217,9 @@ function registerGetAccountsFromUser(app: Application) {
  */
 function registerCreateAccount(app: Application) {
     app.post('/accounts', authJwt.verifyToken, async (req, res, next) => {
-        const id = sanitize(req.body.id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
         const limit = account_settings.account_limit;
-        const accounts = await Account.find({ user_id: id }).exec();
+        const accounts = await Account.find({ account_owner_id: user_id }).exec();
 
         if (accounts.length == limit) {
             res.status(409).send({ message: 'Account limit reached!' });
@@ -194,11 +232,11 @@ function registerCreateAccount(app: Application) {
         }
 
         const data = {
-            user_id: id,
+            account_owner_id: user_id,
             account_name: sanitize(req.body.account_name),
             account_currency: sanitize(req.body.account_currency),
             account_desc: sanitize(req.body.account_desc),
-            balance: sanitize(req.body.balance),
+            account_balance: sanitize(req.body.account_balance),
         };
 
         await Account.create(data, function (err: mongoose.CallbackError) {
@@ -232,13 +270,9 @@ function registerCreateAccount(app: Application) {
  *           schema:
  *             type: "object"
  *             required:
- *             - _id
- *             - user_id
+ *             - account_id
  *             properties:
- *               _id:
- *                 type: "string"
- *                 example: "63cdbc09a3adb6d82c13254a"
- *               user_id:
+ *               account_id:
  *                 type: "string"
  *                 example: "f343dfgj435jkgfn34dfdgdf"
  *     responses:
@@ -266,8 +300,8 @@ function registerCreateAccount(app: Application) {
  *                   type: "string"
  *             example:
  *               message: "No token provided!"
- *       403:
- *         description: "Not an authorized user"
+ *       404:
+ *         description: "Not found"
  *         content:
  *           application/json:
  *             schema:
@@ -277,18 +311,24 @@ function registerCreateAccount(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "You are not authorized to delete this account."
+ *               message: "No matching account was found for your user."
  */
 function registerDeleteAccount(app: Application) {
     app.delete('/accounts', authJwt.verifyToken, function (req, res, next) {
-        const id = sanitize(req.body.id);
-        if (id != req.body.user_id) {
-            res.status(403).send({ message: 'You are not authorized to delete this account.' });
-            return;
-        }
-        Account.findByIdAndRemove(mongoose.Types.ObjectId.createFromHexString(req.body._id), sanitize(req.body), function (err, post) {
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const account_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
+
+        Account.findOneAndRemove({
+            _id: account_id,
+            account_owner_id: user_id,
+        }, (err: mongoose.CallbackError, result: mongoose.Document) => {
             if (err) return next(err);
-            res.status(200).send({ message: 'Account deleted successfully' });
+
+            if (!result) {
+                res.status(404).send({ message: 'No matching account was found for your user.' });
+            } else {
+                res.status(200).send({ message: 'Account deleted successfully' });
+            }
         });
     });
 }
@@ -300,7 +340,7 @@ function registerDeleteAccount(app: Application) {
  *     tags:
  *     - "Account API"
  *     summary: "Update an account"
- *     description: "update an account"
+ *     description: "Update an account for your user, account_id is required, everything else is optional."
  *     operationId: "accounts__put"
  *     consumes:
  *     - "application/json"
@@ -317,15 +357,11 @@ function registerDeleteAccount(app: Application) {
  *           schema:
  *             type: "object"
  *             required:
- *             - _id
- *             - user_id
+ *             - account_id
  *             properties:
- *               _id:
+ *               account_id:
  *                 type: "string"
  *                 example: "63cdbc09a3adb6d82c13254a"
- *               user_id:
- *                 type: "string"
- *                 example: "f343dfgj435jkgfn34dfdgdf"
  *               account_name:
  *                 type: "string"
  *                 example: "My income"
@@ -335,7 +371,7 @@ function registerDeleteAccount(app: Application) {
  *               account_desc:
  *                 type: "string"
  *                 example: "universal bank"
- *               balance:
+ *               account_balance:
  *                 type: "number"
  *                 example: 1134
  *     responses:
@@ -363,8 +399,8 @@ function registerDeleteAccount(app: Application) {
  *                   type: "string"
  *             example:
  *               message: "No token provided!"
- *       403:
- *         description: "Not an authorized user"
+ *       404:
+ *         description: "Not found"
  *         content:
  *           application/json:
  *             schema:
@@ -374,18 +410,31 @@ function registerDeleteAccount(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "You are not authorized to modify this account."
+ *               message: "No matching account was found for your user."
  */
 function registerUpdateAccount(app: Application) {
     app.put('/accounts', authJwt.verifyToken, function (req, res, next) {
-        const id = sanitize(req.body.id);
-        if (id != req.body.user_id) {
-            res.status(403).send({ message: 'You are not authorized to modify this account.' });
-            return;
-        }
-        Account.findByIdAndUpdate(mongoose.Types.ObjectId.createFromHexString(req.body._id), sanitize(req.body), function (err: mongoose.CallbackError, post: mongoose.Document) {
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const account_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
+
+        const data = {
+            account_name: sanitize(req.body.account_name),
+            account_currency: sanitize(req.body.account_currency),
+            account_desc: sanitize(req.body.account_desc),
+            account_balance: sanitize(req.body.account_balance),
+        };
+
+        Account.findOneAndUpdate({
+            _id: account_id,
+            account_owner_id: user_id,
+        }, data, (err: mongoose.CallbackError, result: mongoose.Document) => {
             if (err) return next(err);
-            res.status(200).send({ message: 'Account modified successfully' });
+
+            if (!result) {
+                res.status(404).send({ message: 'No matching account was found for your user.' });
+            } else {
+                res.status(200).send({ message: 'Account updated successfully' });
+            }
         });
     });
 }

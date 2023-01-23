@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import { account_settings } from '../config.json';
 
 const AccountSchema = new mongoose.Schema({
-    user_id: {
-        type: String,
+    account_owner_id: {
+        type: mongoose.Types.ObjectId,
         required: true,
     },
     account_name: {
@@ -18,7 +18,7 @@ const AccountSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
-    balance: {
+    account_balance: {
         type: Number,
         default: 0,
     },
