@@ -24,7 +24,7 @@ import { registerAccountRoutes } from './routes/accounts.routes';
 /**
  * Required configuration sections
  */
-import { website_port, session_secret, mongodb_auth_url } from './config.json';
+import { website_port, mongodb_auth_url } from './config.json';
 
 /**
  * App Variables
