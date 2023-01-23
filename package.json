@@ -16,6 +16,10 @@
         {
             "name": "TheJeterLP",
             "url": "https://www.thejeterlp.de"
+        },
+        {
+            "name": "TigerCipher",
+            "url": "https://github.com/TigerCipher"
         }
     ],
     "scripts": {
