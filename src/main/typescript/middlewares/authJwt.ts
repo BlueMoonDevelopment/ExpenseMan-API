@@ -15,7 +15,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
         }
 
         const payload = decoded as JwtPayload;
-        req.body.id = payload.id;
+        req.body.token_user_id = payload.id;
         next();
     });
 };
