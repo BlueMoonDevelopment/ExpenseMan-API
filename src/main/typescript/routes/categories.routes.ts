@@ -83,8 +83,37 @@ function registerDeleteCategory(app: Application) {
     });
 }
 
+function registerUpdateCategory(app: Application) {
+    app.put('/categories', authJwt.verifyToken, function (req, res, next) {
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const category_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
+
+        const data = {
+            category_name: sanitize(req.body.category_name),
+            category_type: sanitize(req.body.category_type),
+            category_desc: sanitize(req.body.category_desc),
+            category_color: sanitize(req.body.category_color),
+            category_symbol: sanitize(req.body.category_symbol),
+        };
+
+        Category.findOneAndUpdate({
+            _id: category_id,
+            category_owner_id: user_id,
+        }, data, (err: mongoose.CallbackError, result: mongoose.Document) => {
+            if (err) return next(err);
+
+            if (!result) {
+                res.status(404).send({ message: 'No matching category was found for your user.' });
+            } else {
+                res.status(200).send({ message: 'Category updated successfully' });
+            }
+        });
+    });
+}
+
 export function registerCategoryRoutes(app: Application) {
     registerGetCategoriesFromUser(app);
     registerCreateCategory(app);
     registerDeleteCategory(app);
+    registerUpdateCategory(app);
 }
