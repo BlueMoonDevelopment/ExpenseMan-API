@@ -187,19 +187,7 @@ function registerGetCategoriesFromUser(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No category name was provided."
-*       401:
- *         description: "No category type provided"
- *         content:
- *           application/json:
- *             schema:
- *               type: "object"
- *               properties:
- *                 message:
- *                   title: "Error message"
- *                   type: "string"
- *             example:
- *               message: "No category type was provided."
+ *               message: "No category name and/or type was provided."
  */
 function registerCreateCategory(app: Application) {
     app.post('/categories', authJwt.verifyToken, async (req, res, next) => {
@@ -211,7 +199,7 @@ function registerCreateCategory(app: Application) {
         }
 
         if (!req.body.category_type) {
-            res.status(401).send({ message: 'No category type was provided.' });
+            res.status(400).send({ message: 'No category type was provided.' });
             return;
         }
 
