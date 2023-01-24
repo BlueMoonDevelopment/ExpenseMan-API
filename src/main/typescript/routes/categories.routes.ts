@@ -63,8 +63,28 @@ function registerCreateCategory(app: Application) {
     });
 }
 
+function registerDeleteCategory(app: Application) {
+    app.delete('/categories', authJwt.verifyToken, function (req, res, next) {
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const category_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
+
+        Category.findOneAndRemove({
+            _id: category_id,
+            category_owner_id: user_id,
+        }, (err: mongoose.CallbackError, result: mongoose.Document) => {
+            if (err) return next(err);
+
+            if (!result) {
+                res.status(404).send({ message: 'No matching category was found for your user.' });
+            } else {
+                res.status(200).send({ message: 'Category deleted successfully' });
+            }
+        });
+    });
+}
 
 export function registerCategoryRoutes(app: Application) {
     registerGetCategoriesFromUser(app);
     registerCreateCategory(app);
+    registerDeleteCategory(app);
 }
