@@ -5,8 +5,6 @@ import sanitize from 'mongo-sanitize';
 import { authJwt } from '../middlewares/authJwt';
 import { Income } from '../models/income.model';
 import { Account } from '../models/account.model';
-import { User } from '../models/user.model';
-import jwt from 'jsonwebtoken';
 import { Category } from '../models/categories.model';
 
 // TODO: Create API
@@ -98,7 +96,7 @@ function registerCreateIncome(app: Application) {
             income_name: sanitize(req.body.income_name),
             income_value: sanitize(req.body.income_value),
             income_desc: sanitize(req.body.income_desc),
-            income_repeat_cycle: sanitize(req.body.income_repeat_cycle),
+            income_target_day: sanitize(req.body.income_target_day),
         };
 
         await Income.create(data, function (err: mongoose.CallbackError) {
@@ -129,23 +127,21 @@ function registerDeleteIncome(app: Application) {
     });
 }
 
-// TODO: Create Update method
-function registerUpdateCategory(app: Application) {
-    app.put('/categories', authJwt.verifyToken, function (req, res, next) {
+function registerUpdateIncome(app: Application) {
+    app.put('/income', authJwt.verifyToken, function (req, res, next) {
         const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
-        const category_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
+        const income_id = mongoose.Types.ObjectId.createFromHexString(req.body.income_id);
 
         const data = {
-            category_name: sanitize(req.body.category_name),
-            category_type: sanitize(req.body.category_type),
-            category_desc: sanitize(req.body.category_desc),
-            category_color: sanitize(req.body.category_color),
-            category_symbol: sanitize(req.body.category_symbol),
+            income_name: sanitize(req.body.income_name),
+            income_value: sanitize(req.body.income_value),
+            income_desc: sanitize(req.body.income_desc),
+            income_repeat_cycle: sanitize(req.body.income_repeat_cycle),
         };
 
-        Category.findOneAndUpdate({
-            _id: category_id,
-            category_owner_id: user_id,
+        Income.findOneAndUpdate({
+            _id: income_id,
+            income_owner_id: user_id,
         }, data, (err: mongoose.CallbackError, result: mongoose.Document) => {
             if (err) return next(err);
 
@@ -159,8 +155,8 @@ function registerUpdateCategory(app: Application) {
 }
 
 export function registerIncomeRoutes(app: Application) {
-    registerGetCategoriesFromUser(app);
-    registerCreateCategory(app);
-    registerDeleteCategory(app);
-    registerUpdateCategory(app);
+    registerGetIncomeFromUser(app);
+    registerCreateIncome(app);
+    registerDeleteIncome(app);
+    registerUpdateIncome(app);
 }

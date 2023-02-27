@@ -25,7 +25,7 @@ const IncomeSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
-    income_repeat_cycle: {
+    income_target_day: {
         type: Number,
         default: -1,
     },
