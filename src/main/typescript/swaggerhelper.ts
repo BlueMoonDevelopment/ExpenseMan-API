@@ -27,7 +27,7 @@ const spec = swaggerJSDoc.default(options);
 const customOptions = {
     customSiteTitle: 'ExpenseMan - API',
     customfavIcon: './favicon.ico',
-    customCss: '.swagger-ui .topbar { display: none }',
+    customCssUrl: './swagger.css',
 };
 
 /**
@@ -44,6 +44,7 @@ const customOptions = {
  *        description: "Successful Response"
  */
 export function registerSwaggerUI(app: Application) {
+    console.log(`${__dirname}`);
     app.use('/', swaggerUi.serve, swaggerUi.setup(spec, customOptions));
 }
 
