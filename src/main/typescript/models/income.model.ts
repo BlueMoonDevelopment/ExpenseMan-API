@@ -13,6 +13,14 @@ const IncomeSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    income_value: {
+        type: Number,
+        required: true,
+    },
+    income_category: {
+        type: mongoose.Types.ObjectId,
+        required: true,
+    },
     income_desc: {
         type: String,
         default: '',
@@ -20,7 +28,7 @@ const IncomeSchema = new mongoose.Schema({
     income_repeat_cycle: {
         type: Number,
         default: -1,
-    }
+    },
 });
 
 export const Income = mongoose.model('Income', IncomeSchema);
