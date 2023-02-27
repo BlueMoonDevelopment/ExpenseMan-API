@@ -28,7 +28,7 @@ import { Category } from '../models/categories.model';
  *           schema:
  *             type: "object"
  *             properties:
- *               account_id:
+ *               category_id:
  *                 type: "string"
  *                 example: "63cdbc09a3adb6d82c13254a"
  *     responses:
@@ -175,7 +175,7 @@ function registerGetCategoriesFromUser(app: Application) {
  *                   title: "Confirmation message"
  *                   type: "string"
  *             example:
- *               message: "Account creation was successful"
+ *               message: "Category creation was successful"
  *       400:
  *         description: "No category name provided"
  *         content:
