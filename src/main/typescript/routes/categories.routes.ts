@@ -175,7 +175,7 @@ function registerGetCategoriesFromUser(app: Application) {
  *                   title: "Confirmation message"
  *                   type: "string"
  *             example:
- *               message: "Account creation was successful"
+ *               message: "Category creation was successful"
  *       400:
  *         description: "No category name provided"
  *         content:
