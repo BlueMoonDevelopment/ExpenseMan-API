@@ -20,7 +20,7 @@ const ExpenseSchema = new mongoose.Schema({
     expense_repeat_cycle: {
         type: Number,
         default: -1,
-    }
+    },
 });
 
 export const Expense = mongoose.model('Expense', ExpenseSchema);

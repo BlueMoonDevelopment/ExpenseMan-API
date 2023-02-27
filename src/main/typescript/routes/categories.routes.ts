@@ -28,7 +28,7 @@ import { Category } from '../models/categories.model';
  *           schema:
  *             type: "object"
  *             properties:
- *               account_id:
+ *               category_id:
  *                 type: "string"
  *                 example: "63cdbc09a3adb6d82c13254a"
  *     responses:

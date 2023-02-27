@@ -55,7 +55,6 @@ app.use(morgan('combined'));
 app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
 app.use(express.static(__dirname + '/public'));
 app.set('trust proxy', true);
-app.set('view engine', 'ejs');
 
 // Setup header to allow access-token
 app.use(function (req, res, next) {
