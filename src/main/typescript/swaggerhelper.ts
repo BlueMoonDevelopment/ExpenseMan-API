@@ -26,6 +26,7 @@ const options: swaggerJSDoc.OAS3Options = {
 const spec = swaggerJSDoc.default(options);
 const customOptions = {
     customSiteTitle: 'ExpenseMan - API',
+    customfavIcon: './favicon.ico',
     customCss: '.swagger-ui .topbar { display: none }',
 };
 

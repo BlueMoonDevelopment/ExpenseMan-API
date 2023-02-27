@@ -21,6 +21,7 @@ import { registerSwaggerUI } from './swaggerhelper';
 import { registerAuthRoutes } from './routes/auth.routes';
 import { registerAccountRoutes } from './routes/accounts.routes';
 import { registerCategoryRoutes } from './routes/categories.routes';
+import { registerIncomeRoutes } from './routes/income.routes';
 
 /**
  * Required configuration sections
@@ -55,7 +56,6 @@ app.use(morgan('combined'));
 app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
 app.use(express.static(__dirname + '/public'));
 app.set('trust proxy', true);
-app.set('view engine', 'ejs');
 
 // Setup header to allow access-token
 app.use(function (req, res, next) {
@@ -81,6 +81,7 @@ declare module 'jsonwebtoken' {
 registerAuthRoutes(app);
 registerAccountRoutes(app);
 registerCategoryRoutes(app);
+registerIncomeRoutes(app);
 
 registerSwaggerUI(app);
 
