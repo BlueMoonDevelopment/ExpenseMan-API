@@ -17,7 +17,7 @@ const IncomeSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    income_category: {
+    income_category_id: {
         type: mongoose.Types.ObjectId,
         required: true,
     },
