@@ -49,7 +49,7 @@
         "@types/mongo-sanitize": "^1.0.1",
         "@types/mongoose-unique-validator": "^1.0.7",
         "@types/morgan": "^1.9.4",
-        "@types/node": "^18.14.0",
+        "@types/node": "^18.14.2",
         "@types/swagger-jsdoc": "^6.0.1",
         "@types/swagger-ui-express": "^4.1.3",
         "@typescript-eslint/eslint-plugin": "^5.53.0",
