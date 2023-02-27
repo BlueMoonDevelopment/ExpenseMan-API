@@ -1,7 +1,0 @@
-{
-    "website_port": 8083,
-    "debug_log": false,
-    "session_secret": "your_secret",
-    "mongodb_auth_url": "mongodb+srv://Jeter:hn59g0JIGHUiEeZn@expenseman.hptrtsf.mongodb.net/?retryWrites=true&w=majority",
-    "jwt_secret": "secret"
-}
