@@ -5,6 +5,8 @@ import sanitize from 'mongo-sanitize';
 import { authJwt } from '../middlewares/authJwt';
 import { Account } from '../models/account.model';
 import { account_settings } from '../config.json';
+import { expense } from '../models/expense.model';
+import { Income } from '../models/income.model';
 
 /**
  * @swagger
@@ -119,6 +121,14 @@ function registerGetAccountsFromUser(app: Application) {
             } else {
                 accounts = await Account.find({ account_owner_id: user_id }).exec();
             }
+
+            for (const account of accounts) {
+                const expenses = await expense.find({ expense_owner_id: user_id, expense_account_id: account.id });
+                account.account_expenses = expenses;
+                const incomes = await Income.find({ income_owner_id: user_id, income_account_id: account.id });
+                account.account_income = incomes;
+            }
+
             res.json(accounts);
         } catch (err) {
             res.status(500).send({ message: `Unknown error occured: ${err}` });
