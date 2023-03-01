@@ -94,6 +94,18 @@ import { Category } from '../models/categories.model';
  *                   type: "string"
  *             example:
  *               message: "Specified category_id not found."
+ *       401:
+ *         description: "No token provided or token is wrong"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "No token provided!"
  */
 function registerGetCategoriesFromUser(app: Application) {
     app.get('/categories', authJwt.verifyToken, async (req, res) => {
@@ -188,6 +200,18 @@ function registerGetCategoriesFromUser(app: Application) {
  *                   type: "string"
  *             example:
  *               message: "No category name and/or type was provided."
+ *       401:
+ *         description: "No token provided or token is wrong"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "No token provided!"
  */
 function registerCreateCategory(app: Application) {
     app.post('/categories', authJwt.verifyToken, async (req, res, next) => {
@@ -274,6 +298,18 @@ function registerCreateCategory(app: Application) {
  *                   type: "string"
  *             example:
  *               message: "No matching category was found for your user."
+ *       401:
+ *         description: "No token provided or token is wrong"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "No token provided!"
  */
 function registerDeleteCategory(app: Application) {
     app.delete('/categories', authJwt.verifyToken, function (req, res, next) {
@@ -365,6 +401,18 @@ function registerDeleteCategory(app: Application) {
  *                   type: "string"
  *             example:
  *               message: "No matching category was found for your user."
+ *       401:
+ *         description: "No token provided or token is wrong"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "No token provided!"
  */
 function registerUpdateCategory(app: Application) {
     app.put('/categories', authJwt.verifyToken, function (req, res, next) {
