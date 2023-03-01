@@ -102,6 +102,18 @@ import { Category } from '../models/categories.model';
  *                   type: "string"
  *             example:
  *               message: "Specified income_id not found."
+ *       401:
+ *         description: "No token provided or token is wrong"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "No token provided!"
  */
 function registerGetIncomeFromUser(app: Application) {
     app.get('/income', authJwt.verifyToken, async (req, res) => {
@@ -213,6 +225,18 @@ function registerGetIncomeFromUser(app: Application) {
  *                   type: "string"
  *             example:
  *               message: "No income name and/or type was provided."
+ *       401:
+ *         description: "No token provided or token is wrong"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "No token provided!"
  */
 function registerCreateIncome(app: Application) {
     app.post('/income', authJwt.verifyToken, async (req, res, next) => {
@@ -336,6 +360,18 @@ function registerCreateIncome(app: Application) {
  *                   type: "string"
  *             example:
  *               message: "No matching income was found for your user."
+ *       401:
+ *         description: "No token provided or token is wrong"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "No token provided!"
  */
 function registerDeleteIncome(app: Application) {
     app.delete('/income', authJwt.verifyToken, function (req, res, next) {
@@ -423,6 +459,18 @@ function registerDeleteIncome(app: Application) {
  *                   type: "string"
  *             example:
  *               message: "No matching income was found for your user."
+ *       401:
+ *         description: "No token provided or token is wrong"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: "object"
+ *               properties:
+ *                 message:
+ *                   title: "Error message"
+ *                   type: "string"
+ *             example:
+ *               message: "No token provided!"
  */
 function registerUpdateIncome(app: Application) {
     app.put('/income', authJwt.verifyToken, function (req, res, next) {
