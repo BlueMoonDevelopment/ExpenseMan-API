@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import sanitize from 'mongo-sanitize';
 
 import { authJwt } from '../middlewares/authJwt';
-import { expense } from '../models/expense.model';
+import { Expense } from '../models/expense.model';
 import { Account } from '../models/account.model';
 import { Category } from '../models/categories.model';
 
@@ -125,27 +125,27 @@ function registerGetExpenseFromUser(app: Application) {
             let expenses;
             if (req.body.expense_id) {
                 const inc_id = mongoose.Types.ObjectId.createFromHexString(req.body.expense_id);
-                expenses = await expense.find({ expense_owner_id: user_id, _id: inc_id }).exec();
+                expenses = await Expense.find({ expense_owner_id: user_id, _id: inc_id }).exec();
                 if (expenses.length == 0) {
                     res.status(404).send({ message: 'Specified expense_id not found.' });
                     return;
                 }
             } else if (req.body.account_id) {
                 const acc_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
-                expenses = await expense.find({ expense_owner_id: user_id, expense_account_id: acc_id }).exec();
+                expenses = await Expense.find({ expense_owner_id: user_id, expense_account_id: acc_id }).exec();
                 if (expenses.length == 0) {
                     res.status(404).send({ message: 'No expense for account found.' });
                     return;
                 }
             } else if (req.body.category_id) {
                 const cat_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
-                expenses = await expense.find({ expense_owner_id: user_id, expense_category_id: cat_id }).exec();
+                expenses = await Expense.find({ expense_owner_id: user_id, expense_category_id: cat_id }).exec();
                 if (expenses.length == 0) {
                     res.status(404).send({ message: 'No expense for category found.' });
                     return;
                 }
             } else {
-                expenses = await expense.find({ expense_owner_id: user_id }).exec();
+                expenses = await Expense.find({ expense_owner_id: user_id }).exec();
             }
             res.json(expenses);
 
@@ -302,7 +302,7 @@ function registerCreateExpense(app: Application) {
             expense_target_day: sanitize(req.body.expense_target_day),
         };
 
-        await expense.create(data, function (err: mongoose.CallbackError) {
+        await Expense.create(data, function (err: mongoose.CallbackError) {
             if (err) return next(err);
             res.status(200).send({ message: 'expense creation was successful' });
         });
@@ -381,7 +381,7 @@ function registerDeleteExpense(app: Application) {
         const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
         const expense_id = mongoose.Types.ObjectId.createFromHexString(req.body.expense_id);
 
-        expense.findOneAndRemove({
+        Expense.findOneAndRemove({
             _id: expense_id,
             expense_owner_id: user_id,
         }, (err: mongoose.CallbackError, result: mongoose.Document) => {
@@ -487,7 +487,7 @@ function registerUpdateExpense(app: Application) {
             expense_target_day: sanitize(req.body.expense_target_day),
         };
 
-        expense.findOneAndUpdate({
+        Expense.findOneAndUpdate({
             _id: expense_id,
             expense_owner_id: user_id,
         }, data, (err: mongoose.CallbackError, result: mongoose.Document) => {
