@@ -3,19 +3,19 @@ import mongoose from 'mongoose';
 import sanitize from 'mongo-sanitize';
 
 import { authJwt } from '../middlewares/authJwt';
-import { Income } from '../models/income.model';
+import { expense } from '../models/expense.model';
 import { Account } from '../models/account.model';
 import { Category } from '../models/categories.model';
 
 /**
  * @swagger
- * /income:
+ * /expense:
  *   get:
  *     tags:
- *     - "Income API"
- *     description: Brings up all incomes for your user if no category_id, account_id or income_id is specified
- *     summary: Get incomes
- *     operationId: income__get
+ *     - "Expense API"
+ *     description: Brings up all expenses for your user if no category_id, account_id or expense_id is specified
+ *     summary: Get expenses
+ *     operationId: expense__get
  *     parameters:
  *       - in: header
  *         name: x-access-token
@@ -35,7 +35,7 @@ import { Category } from '../models/categories.model';
  *               account_id:
  *                 type: "string"
  *                 example: "63cdbc09a3adb6d82c13254a"
- *               income_id:
+ *               expense_id:
  *                 type: "string"
  *                 example: "63cdbc09a3adb6d82c13254a"
  *     responses:
@@ -49,50 +49,50 @@ import { Category } from '../models/categories.model';
  *                   type: "object"
  *                   properties:
  *                     _id:
- *                       title: "income ID"
+ *                       title: "Expense ID"
  *                       type: "string"
- *                     income_owner_id:
+ *                     expense_owner_id:
  *                       title: "Owning user ID"
  *                       type: "string"
- *                     income_account_id:
+ *                     expense_account_id:
  *                       title: "Account ID"
  *                       type: "string"
- *                     income_category_id:
+ *                     expense_category_id:
  *                       title: "Category ID"
  *                       type: "string"
- *                     income_name:
- *                       title: "Income name"
+ *                     expense_name:
+ *                       title: "Expense name"
  *                       type: "string"
- *                     income_value:
- *                       title: "Value of the income"
+ *                     expense_value:
+ *                       title: "Value of the expense"
  *                       type: "number"
- *                     income_desc:
- *                       title: "income description"
+ *                     expense_desc:
+ *                       title: "Expense description"
  *                       type: "string"
- *                     income_target_day:
+ *                     expense_target_day:
  *                       title: "target Month day"
  *                       type: "number"
  *                     __v:
- *                       title: "income version"
+ *                       title: "Expense version"
  *                       type: "integer"
  *                 example:
  *                 - _id: "63cd6f99810a1500c067a70a"
- *                   income_owner_id: "63cd40b83391382af2ae71fb"
- *                   income_account_id: "63cd40b83391382af2ae71fb"
- *                   income_category_id: "63cd40b83391382af2ae71fb"
- *                   income_name: "Monthly Salary"
- *                   income_value: 2482
- *                   income_desc: "Every month on 30th"
- *                   income_target_day: 30
+ *                   expense_owner_id: "63cd40b83391382af2ae71fb"
+ *                   expense_account_id: "63cd40b83391382af2ae71fb"
+ *                   expense_category_id: "63cd40b83391382af2ae71fb"
+ *                   expense_name: "Monthly Salary"
+ *                   expense_value: 2482
+ *                   expense_desc: "Every month on 30th"
+ *                   expense_target_day: 30
  *                   __v: 0
  *                 - _id: "63cd6fbf810a1500c067a70d"
- *                   income_owner_id: "63cd40b83391382af2ae71fb"
- *                   income_account_id: "63cd40b83391382af2ae71fb"
- *                   income_category_id: "63cd40b83391382af2ae71fb"
- *                   income_name: "Tax returns"
- *                   income_value: 143
- *                   income_desc: "Just once"
- *                   income_target_day: -1
+ *                   expense_owner_id: "63cd40b83391382af2ae71fb"
+ *                   expense_account_id: "63cd40b83391382af2ae71fb"
+ *                   expense_category_id: "63cd40b83391382af2ae71fb"
+ *                   expense_name: "Tax returns"
+ *                   expense_value: 143
+ *                   expense_desc: "Just once"
+ *                   expense_target_day: -1
  *       404:
  *         description: "Not found"
  *         content:
@@ -104,7 +104,7 @@ import { Category } from '../models/categories.model';
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "Specified income_id not found."
+ *               message: "Specified expense_id not found."
  *       401:
  *         description: "No token provided or token is wrong"
  *         content:
@@ -118,36 +118,36 @@ import { Category } from '../models/categories.model';
  *             example:
  *               message: "No token provided!"
  */
-function registerGetIncomeFromUser(app: Application) {
-    app.get('/income', authJwt.verifyToken, async (req, res) => {
+function registerGetExpenseFromUser(app: Application) {
+    app.get('/expense', authJwt.verifyToken, async (req, res) => {
         try {
             const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
-            let incomes;
-            if (req.body.income_id) {
-                const inc_id = mongoose.Types.ObjectId.createFromHexString(req.body.income_id);
-                incomes = await Income.find({ income_owner_id: user_id, _id: inc_id }).exec();
-                if (incomes.length == 0) {
-                    res.status(404).send({ message: 'Specified income_id not found.' });
+            let expenses;
+            if (req.body.expense_id) {
+                const inc_id = mongoose.Types.ObjectId.createFromHexString(req.body.expense_id);
+                expenses = await expense.find({ expense_owner_id: user_id, _id: inc_id }).exec();
+                if (expenses.length == 0) {
+                    res.status(404).send({ message: 'Specified expense_id not found.' });
                     return;
                 }
             } else if (req.body.account_id) {
                 const acc_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
-                incomes = await Income.find({ income_owner_id: user_id, income_account_id: acc_id }).exec();
-                if (incomes.length == 0) {
-                    res.status(404).send({ message: 'No income for account found.' });
+                expenses = await expense.find({ expense_owner_id: user_id, expense_account_id: acc_id }).exec();
+                if (expenses.length == 0) {
+                    res.status(404).send({ message: 'No expense for account found.' });
                     return;
                 }
             } else if (req.body.category_id) {
                 const cat_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
-                incomes = await Income.find({ income_owner_id: user_id, income_category_id: cat_id }).exec();
-                if (incomes.length == 0) {
-                    res.status(404).send({ message: 'No income for category found.' });
+                expenses = await expense.find({ expense_owner_id: user_id, expense_category_id: cat_id }).exec();
+                if (expenses.length == 0) {
+                    res.status(404).send({ message: 'No expense for category found.' });
                     return;
                 }
             } else {
-                incomes = await Income.find({ income_owner_id: user_id }).exec();
+                expenses = await expense.find({ expense_owner_id: user_id }).exec();
             }
-            res.json(incomes);
+            res.json(expenses);
 
         } catch (err) {
             res.status(500).send({ message: `Unknown error occured: ${err}` });
@@ -158,13 +158,13 @@ function registerGetIncomeFromUser(app: Application) {
 
 /**
  * @swagger
- * /income:
+ * /expense:
  *   post:
  *     tags:
- *     - "Income API"
- *     summary: "Create new income"
- *     description: "Create a new income"
- *     operationId: "income__post"
+ *     - "Expense API"
+ *     summary: "Create new expense"
+ *     description: "Create a new expense"
+ *     operationId: "expense__post"
  *     consumes:
  *     - "application/json"
  *     parameters:
@@ -180,10 +180,10 @@ function registerGetIncomeFromUser(app: Application) {
  *           schema:
  *             type: "object"
  *             required:
- *             - income_name
- *             - income_value
- *             - income_account_id
- *             - income_category_id
+ *             - expense_name
+ *             - expense_value
+ *             - expense_account_id
+ *             - expense_category_id
  *             properties:
  *               account_id:
  *                 type: "string"
@@ -191,16 +191,16 @@ function registerGetIncomeFromUser(app: Application) {
  *               category_id:
  *                 type: "string"
  *                 example: "f343dfgj435jkgfn34dfdgdf"
- *               income_name:
+ *               expense_name:
  *                 type: "string"
  *                 example: "Salary"
- *               income_value:
+ *               expense_value:
  *                 type: "number"
  *                 example: 2500
- *               income_desc:
+ *               expense_desc:
  *                 type: "string"
  *                 example: "Monthly Salary"
- *               income_target_day:
+ *               expense_target_day:
  *                 type: "number"
  *                 example: 30
  *     responses:
@@ -215,7 +215,7 @@ function registerGetIncomeFromUser(app: Application) {
  *                   title: "Confirmation message"
  *                   type: "string"
  *             example:
- *               message: "Income creation was successful"
+ *               message: "expense creation was successful"
  *       400:
  *         description: "Missing information"
  *         content:
@@ -227,7 +227,7 @@ function registerGetIncomeFromUser(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No income name and/or type was provided."
+ *               message: "No expense name and/or type was provided."
  *       401:
  *         description: "No token provided or token is wrong"
  *         content:
@@ -241,8 +241,8 @@ function registerGetIncomeFromUser(app: Application) {
  *             example:
  *               message: "No token provided!"
  */
-function registerCreateIncome(app: Application) {
-    app.post('/income', authJwt.verifyToken, async (req, res, next) => {
+function registerCreateExpense(app: Application) {
+    app.post('/expense', authJwt.verifyToken, async (req, res, next) => {
         const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
 
         if (!req.body.account_id) {
@@ -250,18 +250,18 @@ function registerCreateIncome(app: Application) {
             return;
         }
 
-        if (!req.body.income_name) {
-            res.status(400).send({ message: 'No Income name was provided.' });
+        if (!req.body.expense_name) {
+            res.status(400).send({ message: 'No expense name was provided.' });
             return;
         }
 
-        if (!req.body.income_value) {
-            res.status(400).send({ message: 'No Income value was provided.' });
+        if (!req.body.expense_value) {
+            res.status(400).send({ message: 'No expense value was provided.' });
             return;
         }
 
         if (!req.body.category_id) {
-            res.status(400).send({ message: 'No Income category ID was provided.' });
+            res.status(400).send({ message: 'No expense category ID was provided.' });
             return;
         }
 
@@ -293,31 +293,31 @@ function registerCreateIncome(app: Application) {
 
 
         const data = {
-            income_owner_id: user_id,
-            income_account_id: account.id,
-            income_category_id: category.id,
-            income_name: sanitize(req.body.income_name),
-            income_value: sanitize(req.body.income_value),
-            income_desc: sanitize(req.body.income_desc),
-            income_target_day: sanitize(req.body.income_target_day),
+            expense_owner_id: user_id,
+            expense_account_id: account.id,
+            expense_category_id: category.id,
+            expense_name: sanitize(req.body.expense_name),
+            expense_value: sanitize(req.body.expense_value),
+            expense_desc: sanitize(req.body.expense_desc),
+            expense_target_day: sanitize(req.body.expense_target_day),
         };
 
-        await Income.create(data, function (err: mongoose.CallbackError) {
+        await expense.create(data, function (err: mongoose.CallbackError) {
             if (err) return next(err);
-            res.status(200).send({ message: 'Income creation was successful' });
+            res.status(200).send({ message: 'expense creation was successful' });
         });
     });
 }
 
 /**
  * @swagger
- * /income:
+ * /expense:
  *   delete:
  *     tags:
- *     - "Income API"
- *     summary: "Delete an income"
- *     description: "Delete an income"
- *     operationId: "income__delete"
+ *     - "Expense API"
+ *     summary: "Delete an expense"
+ *     description: "Delete an expense"
+ *     operationId: "expense__delete"
  *     consumes:
  *     - "application/json"
  *     parameters:
@@ -333,9 +333,9 @@ function registerCreateIncome(app: Application) {
  *           schema:
  *             type: "object"
  *             required:
- *             - income_id
+ *             - expense_id
  *             properties:
- *               income_id:
+ *               expense_id:
  *                 type: "string"
  *                 example: "f343dfgj435jkgfn34dfdgdf"
  *     responses:
@@ -350,7 +350,7 @@ function registerCreateIncome(app: Application) {
  *                   title: "Confirmation message"
  *                   type: "string"
  *             example:
- *               message: "Income deleted successfully"
+ *               message: "expense deleted successfully"
  *       404:
  *         description: "Not found"
  *         content:
@@ -362,7 +362,7 @@ function registerCreateIncome(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No matching income was found for your user."
+ *               message: "No matching expense was found for your user."
  *       401:
  *         description: "No token provided or token is wrong"
  *         content:
@@ -376,21 +376,21 @@ function registerCreateIncome(app: Application) {
  *             example:
  *               message: "No token provided!"
  */
-function registerDeleteIncome(app: Application) {
-    app.delete('/income', authJwt.verifyToken, function (req, res, next) {
+function registerDeleteExpense(app: Application) {
+    app.delete('/expense', authJwt.verifyToken, function (req, res, next) {
         const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
-        const income_id = mongoose.Types.ObjectId.createFromHexString(req.body.income_id);
+        const expense_id = mongoose.Types.ObjectId.createFromHexString(req.body.expense_id);
 
-        Income.findOneAndRemove({
-            _id: income_id,
-            income_owner_id: user_id,
+        expense.findOneAndRemove({
+            _id: expense_id,
+            expense_owner_id: user_id,
         }, (err: mongoose.CallbackError, result: mongoose.Document) => {
             if (err) return next(err);
 
             if (!result) {
-                res.status(404).send({ message: 'No matching income was found for your user.' });
+                res.status(404).send({ message: 'No matching expense was found for your user.' });
             } else {
-                res.status(200).send({ message: 'Income deleted successfully' });
+                res.status(200).send({ message: 'expense deleted successfully' });
             }
         });
     });
@@ -398,13 +398,13 @@ function registerDeleteIncome(app: Application) {
 
 /**
  * @swagger
- * /income:
+ * /expense:
  *   put:
  *     tags:
- *     - "Income API"
- *     summary: "Update an income"
- *     description: "Update an income for your user, income_id is required, everything else is optional."
- *     operationId: "income__put"
+ *     - "Expense API"
+ *     summary: "Update an expense"
+ *     description: "Update an expense for your user, expense_id is required, everything else is optional."
+ *     operationId: "expense__put"
  *     consumes:
  *     - "application/json"
  *     parameters:
@@ -420,21 +420,21 @@ function registerDeleteIncome(app: Application) {
  *           schema:
  *             type: "object"
  *             required:
- *             - income_id
+ *             - expense_id
  *             properties:
- *               income_id:
+ *               expense_id:
  *                 type: "string"
  *                 example: "63cdbc09a3adb6d82c13254a"
- *               income_name:
+ *               expense_name:
  *                 type: "string"
  *                 example: "Subscriptions"
- *               income_value:
+ *               expense_value:
  *                 type: "number"
  *                 example: 2500
- *               income_desc:
+ *               expense_desc:
  *                 type: "string"
  *                 example: "Monthly Salary"
- *               income_target_day:
+ *               expense_target_day:
  *                 type: "number"
  *                 example: 30
  *     responses:
@@ -449,7 +449,7 @@ function registerDeleteIncome(app: Application) {
  *                   title: "Confirmation message"
  *                   type: "string"
  *             example:
- *               message: "Income modified successfully"
+ *               message: "expense modified successfully"
  *       404:
  *         description: "Not found"
  *         content:
@@ -461,7 +461,7 @@ function registerDeleteIncome(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No matching income was found for your user."
+ *               message: "No matching expense was found for your user."
  *       401:
  *         description: "No token provided or token is wrong"
  *         content:
@@ -475,21 +475,21 @@ function registerDeleteIncome(app: Application) {
  *             example:
  *               message: "No token provided!"
  */
-function registerUpdateIncome(app: Application) {
-    app.put('/income', authJwt.verifyToken, function (req, res, next) {
+function registerUpdateExpense(app: Application) {
+    app.put('/expense', authJwt.verifyToken, function (req, res, next) {
         const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
-        const income_id = mongoose.Types.ObjectId.createFromHexString(req.body.income_id);
+        const expense_id = mongoose.Types.ObjectId.createFromHexString(req.body.expense_id);
 
         const data = {
-            income_name: sanitize(req.body.income_name),
-            income_value: sanitize(req.body.income_value),
-            income_desc: sanitize(req.body.income_desc),
-            income_target_day: sanitize(req.body.income_target_day),
+            expense_name: sanitize(req.body.expense_name),
+            expense_value: sanitize(req.body.expense_value),
+            expense_desc: sanitize(req.body.expense_desc),
+            expense_target_day: sanitize(req.body.expense_target_day),
         };
 
-        Income.findOneAndUpdate({
-            _id: income_id,
-            income_owner_id: user_id,
+        expense.findOneAndUpdate({
+            _id: expense_id,
+            expense_owner_id: user_id,
         }, data, (err: mongoose.CallbackError, result: mongoose.Document) => {
             if (err) return next(err);
 
@@ -502,9 +502,9 @@ function registerUpdateIncome(app: Application) {
     });
 }
 
-export function registerIncomeRoutes(app: Application) {
-    registerGetIncomeFromUser(app);
-    registerCreateIncome(app);
-    registerDeleteIncome(app);
-    registerUpdateIncome(app);
+export function registerExpenseRoutes(app: Application) {
+    registerGetExpenseFromUser(app);
+    registerCreateExpense(app);
+    registerDeleteExpense(app);
+    registerUpdateExpense(app);
 }

@@ -27,6 +27,7 @@ import { registerIncomeRoutes } from './routes/income.routes';
  * Required configuration sections
  */
 import { website_port, mongodb_auth_url } from './config.json';
+import { registerExpenseRoutes } from './routes/expense.routes';
 
 /**
  * App Variables
@@ -82,6 +83,7 @@ registerAuthRoutes(app);
 registerAccountRoutes(app);
 registerCategoryRoutes(app);
 registerIncomeRoutes(app);
+registerExpenseRoutes(app);
 
 registerSwaggerUI(app);
 

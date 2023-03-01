@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const ExpenseSchema = new mongoose.Schema({
+const expenseSchema = new mongoose.Schema({
     expense_owner_id: {
         type: mongoose.Types.ObjectId,
         required: true,
@@ -13,14 +13,22 @@ const ExpenseSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    expense_value: {
+        type: Number,
+        required: true,
+    },
+    expense_category_id: {
+        type: mongoose.Types.ObjectId,
+        required: true,
+    },
     expense_desc: {
         type: String,
         default: '',
     },
-    expense_repeat_cycle: {
+    expense_target_day: {
         type: Number,
         default: -1,
     },
 });
 
-export const Expense = mongoose.model('Expense', ExpenseSchema);
+export const expense = mongoose.model('expense', expenseSchema);
