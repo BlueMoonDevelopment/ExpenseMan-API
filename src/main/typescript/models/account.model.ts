@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { account_settings } from '../config.json';
+import { Expense } from './expense.model';
+import { Income } from './income.model';
 
 const AccountSchema = new mongoose.Schema({
     account_owner_id: {
@@ -22,14 +24,8 @@ const AccountSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    account_expenses: {
-        type: Array,
-        default: [],
-    },
-    account_income: {
-        type: Array,
-        default: [],
-    },
+    account_expenses: [],
+    account_income: [],
 });
 
 export const Account = mongoose.model('Account', AccountSchema);
