@@ -7,7 +7,6 @@ import { Account } from '../models/account.model';
 import { account_settings } from '../config.json';
 import { Expense } from '../models/expense.model';
 import { Income } from '../models/income.model';
-import { debug } from '../tools/logmanager';
 
 /**
  * @swagger
