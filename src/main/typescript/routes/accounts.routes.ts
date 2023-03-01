@@ -5,8 +5,9 @@ import sanitize from 'mongo-sanitize';
 import { authJwt } from '../middlewares/authJwt';
 import { Account } from '../models/account.model';
 import { account_settings } from '../config.json';
-import { expense } from '../models/expense.model';
+import { Expense } from '../models/expense.model';
 import { Income } from '../models/income.model';
+import { debug } from '../tools/logmanager';
 
 /**
  * @swagger
@@ -151,7 +152,7 @@ function registerGetAccountsFromUser(app: Application) {
             }
 
             for (const account of accounts) {
-                const expenses = await expense.find({ expense_owner_id: user_id, expense_account_id: account.id });
+                const expenses = await Expense.find({ expense_owner_id: user_id, expense_account_id: account.id });
                 account.account_expenses = expenses;
                 const incomes = await Income.find({ income_owner_id: user_id, income_account_id: account.id });
                 account.account_income = incomes;
@@ -359,13 +360,15 @@ function registerDeleteAccount(app: Application) {
         Account.findOneAndRemove({
             _id: account_id,
             account_owner_id: user_id,
-        }, (err: mongoose.CallbackError, result: mongoose.Document) => {
+        }, async (err: mongoose.CallbackError, result: mongoose.Document) => {
             if (err) return next(err);
 
             if (!result) {
                 res.status(404).send({ message: 'No matching account was found for your user.' });
             } else {
-                res.status(200).send({ message: 'Account deleted successfully' });
+                await Expense.deleteMany({ expense_owner_id: user_id, expense_account_id: account_id });
+                await Income.deleteMany({ income_owner_id: user_id, income_account_id: account_id });
+                res.status(200).send({ message: 'Account and all regarding incomes and expenses deleted successfully.' });
             }
         });
     });
