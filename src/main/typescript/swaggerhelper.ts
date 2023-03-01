@@ -19,7 +19,7 @@ const options: swaggerJSDoc.OAS3Options = {
     failOnErrors: true,
     apis: [
         `${__dirname}/swaggerhelper.ts`,
-        `${__dirname}/routes/*.ts`,
+        `${__dirname}/routes/*.routes.ts`,
     ],
 };
 
