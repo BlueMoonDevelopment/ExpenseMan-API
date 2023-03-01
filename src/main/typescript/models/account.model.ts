@@ -22,6 +22,14 @@ const AccountSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    account_expenses: {
+        type: Array,
+        default: [],
+    },
+    account_income: {
+        type: Array,
+        default: [],
+    },
 });
 
 export const Account = mongoose.model('Account', AccountSchema);
