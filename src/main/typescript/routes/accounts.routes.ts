@@ -61,23 +61,51 @@ import { Income } from '../models/income.model';
  *                     account_balance:
  *                       title: "Account balance"
  *                       type: "number"
+ *                     account_expenses:
+ *                       title: "Account expenses"
+ *                       type: "array"
+ *                     account_income:
+ *                       title: "Account income"
+ *                       type: "array"
  *                     __v:
  *                       title: "Account version"
- *                       type: "integer"
+ *                     type: "integer"
  *                 example:
  *                 - _id: "63cd6f99810a1500c067a70a"
  *                   account_owner_id: "63cd40b83391382af2ae71fb"
  *                   account_name: "Testaccount"
  *                   account_currency: "$"
- *                   account_desc: ""
- *                   account_balance: 0,
+ *                   account_desc: "First test account"
+ *                   account_balance: 0
+ *                   account_income:
+ *                   - _id: "63fd11de3f5bd9907e72e0f1"
+ *                     income_owner_id: "63cd40b83391382af2ae71fb"
+ *                     income_account_id: "63cd6f99810a1500c067a70a"
+ *                     income_name: "Basic income"
+ *                     income_value: 2500
+ *                     income_category_id: "63fd11293f5bd9907e72e0ec"
+ *                     income_desc: "Basic income"
+ *                     income_target_day: 30
+ *                     __v: ""
+ *                   account_expenses:
+ *                   - _id: "63fd11de3f5bd9907e72e0f1"
+ *                     expense_owner_id: "63cd40b83391382af2ae71fb"
+ *                     expense_account_id: "63cd6f99810a1500c067a70a"
+ *                     expense_name: "Basic expense"
+ *                     expense_value: 25
+ *                     expense_category_id: "63fd11293f5bd9907e72e0ec"
+ *                     expense_desc: "Basic expense"
+ *                     expense_target_day: 11
+ *                     __v: ""
  *                   __v: 0
  *                 - _id: "63cd6fbf810a1500c067a70d"
  *                   account_owner_id: "63cd40b83391382af2ae71fb"
  *                   account_name: "Testaccount 2"
  *                   account_currency: "€"
  *                   account_desc: "This is the second test account"
- *                   account_balance: 100,
+ *                   account_balance: 100
+ *                   account_income: []
+ *                   account_expenses: []
  *                   __v: 0
  *       401:
  *         description: "No token provided or token is wrong"
