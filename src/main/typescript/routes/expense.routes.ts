@@ -302,10 +302,14 @@ function registerCreateExpense(app: Application) {
             expense_target_day: sanitize(req.body.expense_target_day),
         };
 
-        await Expense.create(data, function (err: mongoose.CallbackError) {
-            if (err) return next(err);
+        try {
+            await Expense.create(data);
             res.status(200).send({ message: 'expense creation was successful' });
-        });
+        } catch (err) {
+            if (err) {
+                return next(err);
+            }
+        }
     });
 }
 

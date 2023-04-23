@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { InferSchemaType } from 'mongoose';
 
 const CategorySchema = new mongoose.Schema({
     category_owner_id: {
@@ -27,4 +27,6 @@ const CategorySchema = new mongoose.Schema({
     },
 });
 
-export const Category = mongoose.model('Category', CategorySchema);
+type ICategory = InferSchemaType<typeof CategorySchema>;
+
+export const Category = mongoose.model<ICategory>('Category', CategorySchema);

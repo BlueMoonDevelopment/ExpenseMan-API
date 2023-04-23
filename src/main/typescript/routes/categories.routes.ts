@@ -236,10 +236,12 @@ function registerCreateCategory(app: Application) {
             category_symbol: sanitize(req.body.category_symbol),
         };
 
-        Category.create(data, function (err: mongoose.CallbackError) {
-            if (err) return next(err);
+        try {
+            await Category.create(data);
             res.status(200).send({ message: 'Category creation was successful' });
-        });
+        } catch (err) {
+            if (err) return next(err);
+        }
     });
 }
 

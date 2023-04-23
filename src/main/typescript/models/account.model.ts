@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { InferSchemaType } from 'mongoose';
 import { account_settings } from '../config.json';
 
 const AccountSchema = new mongoose.Schema({
@@ -26,4 +26,5 @@ const AccountSchema = new mongoose.Schema({
     account_income: [],
 });
 
-export const Account = mongoose.model('Account', AccountSchema);
+type IAccount = InferSchemaType<typeof AccountSchema>;
+export const Account = mongoose.model<IAccount>('Account', AccountSchema);
