@@ -302,10 +302,12 @@ function registerCreateIncome(app: Application) {
             income_target_day: sanitize(req.body.income_target_day),
         };
 
-        await Income.create(data, function (err: mongoose.CallbackError) {
-            if (err) return next(err);
+        try {
+            await Income.create(data);
             res.status(200).send({ message: 'Income creation was successful' });
-        });
+        } catch (err) {
+            if (err) return next(err);
+        }
     });
 }
 
