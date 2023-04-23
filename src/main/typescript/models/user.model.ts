@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, InferSchemaType } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
+const UserSchema: Schema = new Schema({
     email: {
         type: String,
         lowercase: true,
@@ -9,7 +9,12 @@ const UserSchema = new mongoose.Schema({
         match: [/\S+@\S+\.\S+/, 'is invalid'],
         index: true,
     },
-    password: String,
+    password: {
+        type: String,
+        required: true,
+    },
 });
 
-export const User = mongoose.model('User', UserSchema);
+type IUser = InferSchemaType<typeof UserSchema>;
+
+export const User = mongoose.model<IUser>('User', UserSchema);

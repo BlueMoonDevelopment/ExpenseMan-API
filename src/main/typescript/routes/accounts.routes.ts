@@ -277,10 +277,12 @@ function registerCreateAccount(app: Application) {
             account_balance: sanitize(req.body.account_balance),
         };
 
-        await Account.create(data, function (err: mongoose.CallbackError) {
-            if (err) return next(err);
+        try {
+            await Account.create(data);
             res.status(200).send({ message: 'Account creation was successful' });
-        });
+        } catch (err) {
+            return next(err);
+        }
     });
 }
 
