@@ -16,8 +16,10 @@ jobs:
     - uses: actions/checkout@v3
     - name: Upgrade NPM
       run: npm install -g npm
-    - name: Install TSC
+    - name: Install Typescript
       run: npm install -g typescript
+    - name: Install tsc
+      run: npm install -g tsc
     - name: copy-config
       run: cp src/main/typescript/config.example.json src/main/typescript/config.json
     - name: Use Node.js ${{ matrix.node-version }}
