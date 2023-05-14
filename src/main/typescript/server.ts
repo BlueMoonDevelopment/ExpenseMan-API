@@ -40,10 +40,7 @@ export const rootPath = __dirname;
  */
 mongoose.Promise = global.Promise;
 mongoose.set('strictQuery', false);
-mongoose.connect(mongodb_auth_url, {
-    keepAlive: true,
-    keepAliveInitialDelay: 300000,
-}).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
+mongoose.connect(mongodb_auth_url).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
 
 /**
  * App Configuration
