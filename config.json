@@ -1,0 +1,10 @@
+{
+    "website_port": 8083,
+    "debug_log": true,
+    "mongodb_auth_url": "mongodb://jeter:Anakin98!@bluemoondev.ddnsfree.com:27017",
+    "jwt_secret": "expenseman-secret-cb!c4!2rWwWI$4$m",
+    "account_settings": {
+        "account_limit": 3,
+        "default_account_currency": "$"
+    }
+}
