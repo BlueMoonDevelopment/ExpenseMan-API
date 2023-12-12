@@ -21,7 +21,7 @@ jobs:
     - name: copy-config
       run: cp src/main/typescript/config.example.json src/main/typescript/config.json
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: latest
         cache: 'npm'
