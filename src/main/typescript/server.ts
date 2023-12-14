@@ -3,11 +3,9 @@
  */
 import express, { Application } from 'express';
 import ratelimit from 'express-rate-limit';
-import bodyParser from 'body-parser';
 import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
 import mongoose from 'mongoose';
+import session from 'express-session';
 
 /**
  * Required internal modules
@@ -22,18 +20,26 @@ import { registerAuthRoutes } from './routes/auth.routes';
 import { registerAccountRoutes } from './routes/accounts.routes';
 import { registerCategoryRoutes } from './routes/categories.routes';
 import { registerIncomeRoutes } from './routes/income.routes';
+import { registerExpenseRoutes } from './routes/expense.routes';
+import { registerOAuthRoutes } from './oauthhelper';
 
 /**
  * Required configuration sections
  */
-import { website_port, mongodb_auth_url } from './config.json';
-import { registerExpenseRoutes } from './routes/expense.routes';
+import { website_port, mongodb_auth_url, session_secret, frontend_url, development_mode } from './config.json';
 
 /**
  * App Variables
  */
 const app: Application = express();
-export const rootPath = __dirname;
+const oneDay = 1000 * 60 * 60 * 24;
+
+declare module 'express-session' {
+    interface Session {
+        userId: string;
+        accessToken: string;
+    }
+}
 
 /**
  * Database connection
@@ -45,15 +51,26 @@ mongoose.connect(mongodb_auth_url).then(() => info('Connected to mongodb')).catc
 /**
  * App Configuration
  */
-app.disable('x-powered-by');
+app.use(cors({
+    origin: frontend_url,
+    credentials: true,
+}));
 app.use(express.json());
-app.use(helmet());
-app.use(bodyParser.json());
-app.use(cors({ origin: '*' }));
-app.use(morgan('combined'));
+app.use(session({
+    resave: false,
+    saveUninitialized: false,
+    secret: session_secret,
+    cookie: {
+        maxAge: oneDay,
+        sameSite: development_mode ? 'lax' : 'none',
+        secure: !development_mode,
+    },
+}));
+
 app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
 app.use(express.static(__dirname + '/public'));
 app.set('trust proxy', true);
+
 
 // Setup header to allow access-token
 app.use(function (req, res, next) {
@@ -81,6 +98,7 @@ registerAccountRoutes(app);
 registerCategoryRoutes(app);
 registerIncomeRoutes(app);
 registerExpenseRoutes(app);
+registerOAuthRoutes(app);
 
 registerSwaggerUI(app);
 
@@ -89,10 +107,11 @@ app.use(function (req, res) {
     res.status(404).send('404 Not found');
 });
 
-
 /**
  * Server Activation
  */
 app.listen(website_port, () => {
-    info(`Listening to requests at 127.0.0.1:${website_port}`);
+    info(`Listening to requests at Port ${website_port}. 
+    Development mode: ${development_mode}
+    Frontend-URL: ${frontend_url}`);
 });
