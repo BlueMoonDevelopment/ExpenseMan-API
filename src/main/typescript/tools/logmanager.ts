@@ -4,7 +4,7 @@ import { debug_log } from '../config.json';
 * If debug_log is enabled in config.json file, print out debug message to console
 * @param {string} msg The message to log
 */
-export function debug(msg: string): void {
+export function debug(msg: any): void {
     if (debug_log) {
         console.log(`[DEBUG] ${msg}`);
     }
@@ -14,7 +14,7 @@ export function debug(msg: string): void {
  * Print out info message to console
  * @param {string} msg The message to log
  */
-export function info(msg: string): void {
+export function info(msg: any): void {
     console.log(`[INFO] ${msg}`);
 }
 
@@ -22,11 +22,11 @@ export function info(msg: string): void {
  * Print out error message to console
  * @param {string} msg The error message to log
  */
-export function error(msg: string): void {
+export function error(msg: any): void {
     console.log(`[ERROR] ${msg}`);
 }
 
-export function errorWithError(msg: string, err: Error): void {
+export function errorWithError(msg: any, err: Error): void {
     console.log(`[ERROR] ${msg}`);
     console.error(err);
 }
