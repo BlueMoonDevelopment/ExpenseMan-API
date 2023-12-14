@@ -383,7 +383,7 @@ function registerDeleteIncome(app: Application) {
         const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
         const income_id = mongoose.Types.ObjectId.createFromHexString(req.body.income_id);
 
-        Income.findOneAndRemove({
+        Income.findOneAndDelete({
             _id: income_id,
             income_owner_id: user_id,
         }, (err: mongoose.CallbackError, result: mongoose.Document) => {

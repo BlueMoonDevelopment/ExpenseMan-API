@@ -385,7 +385,7 @@ function registerDeleteExpense(app: Application) {
         const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
         const expense_id = mongoose.Types.ObjectId.createFromHexString(req.body.expense_id);
 
-        Expense.findOneAndRemove({
+        Expense.findOneAndDelete({
             _id: expense_id,
             expense_owner_id: user_id,
         }, (err: mongoose.CallbackError, result: mongoose.Document) => {

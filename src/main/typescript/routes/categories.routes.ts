@@ -318,7 +318,7 @@ function registerDeleteCategory(app: Application) {
         const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
         const category_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
 
-        Category.findOneAndRemove({
+        Category.findOneAndDelete({
             _id: category_id,
             category_owner_id: user_id,
         }, (err: mongoose.CallbackError, result: mongoose.Document) => {

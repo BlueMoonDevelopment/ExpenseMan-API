@@ -358,7 +358,7 @@ function registerDeleteAccount(app: Application) {
         const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
         const account_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
 
-        Account.findOneAndRemove({
+        Account.findOneAndDelete({
             _id: account_id,
             account_owner_id: user_id,
         }, async (err: mongoose.CallbackError, result: mongoose.Document) => {
