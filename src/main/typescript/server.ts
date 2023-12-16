@@ -2,10 +2,10 @@
  * Required external modules
  */
 import express, { Application } from 'express';
-import ratelimit from 'express-rate-limit';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import session from 'express-session';
+import morgan from 'morgan';
 
 /**
  * Required internal modules
@@ -56,6 +56,7 @@ app.use(cors({
     credentials: true,
 }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(session({
     resave: false,
     saveUninitialized: false,
@@ -67,7 +68,7 @@ app.use(session({
     },
 }));
 
-app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
+app.use(morgan('combined'));
 app.use(express.static(__dirname + '/public'));
 app.set('trust proxy', true);
 
