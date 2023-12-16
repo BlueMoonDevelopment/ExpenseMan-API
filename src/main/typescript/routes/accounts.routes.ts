@@ -8,15 +8,6 @@ import { account_settings } from '../config.json';
 import { Expense } from '../models/expense.model';
 import { Income } from '../models/income.model';
 
-
-function test(app: Application) {
-    app.get('/test', async (req, res) => {
-        console.log(req.session.userId);
-        console.log(req.session.accessToken);
-        res.send({ userID: req.session.userId, accessToken: req.session.accessToken });
-    });
-}
-
 /**
  * @swagger
  * /accounts:
@@ -495,5 +486,4 @@ export function registerAccountRoutes(app: Application) {
     registerCreateAccount(app);
     registerDeleteAccount(app);
     registerUpdateAccount(app);
-    test(app);
 }
