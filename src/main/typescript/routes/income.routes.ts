@@ -16,12 +16,6 @@ import { Category } from '../models/categories.model';
  *     description: Brings up all incomes for your user if no category_id, account_id or income_id is specified
  *     summary: Get incomes
  *     operationId: income__get
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: false
  *       content:
@@ -106,7 +100,7 @@ import { Category } from '../models/categories.model';
  *             example:
  *               message: "Specified income_id not found."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -116,12 +110,12 @@ import { Category } from '../models/categories.model';
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerGetIncomeFromUser(app: Application) {
     app.get('/income', authJwt.verifyToken, async (req, res) => {
         try {
-            const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+            const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
             let incomes;
             if (req.body.income_id) {
                 const inc_id = mongoose.Types.ObjectId.createFromHexString(req.body.income_id);
@@ -165,14 +159,6 @@ function registerGetIncomeFromUser(app: Application) {
  *     summary: "Create new income"
  *     description: "Create a new income"
  *     operationId: "income__post"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -229,7 +215,7 @@ function registerGetIncomeFromUser(app: Application) {
  *             example:
  *               message: "No income name and/or type was provided."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -239,11 +225,11 @@ function registerGetIncomeFromUser(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerCreateIncome(app: Application) {
     app.post('/income', authJwt.verifyToken, async (req, res, next) => {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
 
         if (!req.body.account_id) {
             res.status(400).send({ message: 'No account ID was provided.' });
@@ -320,14 +306,6 @@ function registerCreateIncome(app: Application) {
  *     summary: "Delete an income"
  *     description: "Delete an income"
  *     operationId: "income__delete"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -366,7 +344,7 @@ function registerCreateIncome(app: Application) {
  *             example:
  *               message: "No matching income was found for your user."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -376,11 +354,11 @@ function registerCreateIncome(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerDeleteIncome(app: Application) {
     app.delete('/income', authJwt.verifyToken, function (req, res, next) {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
         const income_id = mongoose.Types.ObjectId.createFromHexString(req.body.income_id);
 
         Income.findOneAndDelete({
@@ -407,14 +385,6 @@ function registerDeleteIncome(app: Application) {
  *     summary: "Update an income"
  *     description: "Update an income for your user, income_id is required, everything else is optional."
  *     operationId: "income__put"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -465,7 +435,7 @@ function registerDeleteIncome(app: Application) {
  *             example:
  *               message: "No matching income was found for your user."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -475,11 +445,11 @@ function registerDeleteIncome(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerUpdateIncome(app: Application) {
     app.put('/income', authJwt.verifyToken, function (req, res, next) {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
         const income_id = mongoose.Types.ObjectId.createFromHexString(req.body.income_id);
 
         const data = {

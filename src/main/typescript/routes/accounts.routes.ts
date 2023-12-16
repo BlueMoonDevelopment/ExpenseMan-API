@@ -17,12 +17,6 @@ import { Income } from '../models/income.model';
  *     description: Brings up all Accounts for your user if no account_id is specified, or single account
  *     summary: Get accounts
  *     operationId: accounts__get
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: false
  *       content:
@@ -108,7 +102,7 @@ import { Income } from '../models/income.model';
  *                   account_expenses: []
  *                   __v: 0
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -118,7 +112,7 @@ import { Income } from '../models/income.model';
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  *       404:
  *         description: "Not found"
  *         content:
@@ -135,7 +129,7 @@ import { Income } from '../models/income.model';
 function registerGetAccountsFromUser(app: Application) {
     app.get('/accounts', authJwt.verifyToken, async (req, res) => {
         try {
-            const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+            const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
 
             let accounts;
 
@@ -174,14 +168,6 @@ function registerGetAccountsFromUser(app: Application) {
  *     summary: "Create new account"
  *     description: "Create a new account"
  *     operationId: "accounts__post"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -217,7 +203,7 @@ function registerGetAccountsFromUser(app: Application) {
  *             example:
  *               message: "Account creation was successful"
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -227,7 +213,7 @@ function registerGetAccountsFromUser(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  *       409:
  *         description: "Limit reached"
  *         content:
@@ -255,7 +241,7 @@ function registerGetAccountsFromUser(app: Application) {
  */
 function registerCreateAccount(app: Application) {
     app.post('/accounts', authJwt.verifyToken, async (req, res, next) => {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
         const limit = account_settings.account_limit;
         const accounts = await Account.find({ account_owner_id: user_id }).exec();
 
@@ -295,14 +281,6 @@ function registerCreateAccount(app: Application) {
  *     summary: "Delete an account"
  *     description: "Delete an account"
  *     operationId: "accounts__delete"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -329,7 +307,7 @@ function registerCreateAccount(app: Application) {
  *             example:
  *               message: "Account deleted successfully"
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -339,7 +317,7 @@ function registerCreateAccount(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  *       404:
  *         description: "Not found"
  *         content:
@@ -355,7 +333,7 @@ function registerCreateAccount(app: Application) {
  */
 function registerDeleteAccount(app: Application) {
     app.delete('/accounts', authJwt.verifyToken, function (req, res, next) {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
         const account_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
 
         Account.findOneAndDelete({
@@ -384,14 +362,6 @@ function registerDeleteAccount(app: Application) {
  *     summary: "Update an account"
  *     description: "Update an account for your user, account_id is required, everything else is optional."
  *     operationId: "accounts__put"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -430,7 +400,7 @@ function registerDeleteAccount(app: Application) {
  *             example:
  *               message: "Account modified successfully"
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -440,7 +410,7 @@ function registerDeleteAccount(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  *       404:
  *         description: "Not found"
  *         content:
@@ -456,7 +426,7 @@ function registerDeleteAccount(app: Application) {
  */
 function registerUpdateAccount(app: Application) {
     app.put('/accounts', authJwt.verifyToken, function (req, res, next) {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
         const account_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
 
         const data = {
