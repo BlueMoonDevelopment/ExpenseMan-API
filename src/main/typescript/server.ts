@@ -6,6 +6,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import morgan from 'morgan';
+import cookies from 'cookie-parser';
 
 /**
  * Required internal modules
@@ -55,6 +56,7 @@ app.use(cors({
     origin: frontend_url,
     credentials: true,
 }));
+app.use(cookies());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
