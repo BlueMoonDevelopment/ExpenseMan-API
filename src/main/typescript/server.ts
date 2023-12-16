@@ -17,7 +17,6 @@ import { registerSwaggerUI } from './swaggerhelper';
 /**
  * Required routes
  */
-import { registerAuthRoutes } from './routes/auth.routes';
 import { registerAccountRoutes } from './routes/accounts.routes';
 import { registerCategoryRoutes } from './routes/categories.routes';
 import { registerIncomeRoutes } from './routes/income.routes';
@@ -96,7 +95,6 @@ declare module 'jsonwebtoken' {
 /**
  * Route definitions
  */
-registerAuthRoutes(app);
 registerAccountRoutes(app);
 registerCategoryRoutes(app);
 registerIncomeRoutes(app);

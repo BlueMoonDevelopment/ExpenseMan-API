@@ -9,9 +9,9 @@ const UserSchema: Schema = new Schema({
         match: [/\S+@\S+\.\S+/, 'is invalid'],
         index: true,
     },
-    password: {
+    sub: {
         type: String,
-        required: false,
+        required: true,
     },
 });
 
