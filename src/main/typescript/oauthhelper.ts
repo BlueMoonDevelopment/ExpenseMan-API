@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import jwt from 'jsonwebtoken';
 
 import { User } from './models/user.model';
-import { jwt_secret } from './config.json';
+import { jwt_secret, frontend_url } from './config.json';
 
 export function registerOAuthRoutes(app: Application) {
     // Either sign-in or sign-up and then sign-in
@@ -12,21 +12,17 @@ export function registerOAuthRoutes(app: Application) {
         const tokenFromBody = req.body.g_csrf_token;
         const cookies = req.signedCookies;
         if (credential === undefined) {
-            return res.status(502).json({ 'message': 'Credential is undefined!' });
+            return res.redirect(200, frontend_url + '/auth/failed');
         }
 
         if (tokenFromBody === undefined) {
-            return res.status(502).json({ 'message': 'CSRF Token is undefined!' });
+            return res.redirect(200, frontend_url + '/auth/failed');
         }
 
 
         // ToDo: Check if g_csrf_token COOKIE has same value as the token that comes from the body
 
         const USER_DATA = jwtDecode(credential);
-
-        console.log('userID: ' + USER_DATA.sub);
-        console.log('Email: ' + USER_DATA.email);
-
 
         let user = await User.findOne({ email: USER_DATA.email, sub: USER_DATA.sub }).exec();
         if (!user || !user.password) {
@@ -43,11 +39,9 @@ export function registerOAuthRoutes(app: Application) {
             // 24 hours
             expiresIn: 86400,
         });
-        const user_id = user._id as string;
-        req.session.userId = user_id;
+        req.session.userId = user._id as string;
         req.session.accessToken = token;
-
-        res.status(200).json({ 'message': 'session was set!' });
+        return res.redirect(200, frontend_url + '/auth/success');
     });
 
     app.get('/auth/google', (req, res) => {
