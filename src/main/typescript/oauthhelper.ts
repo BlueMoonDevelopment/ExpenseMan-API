@@ -12,11 +12,11 @@ export function registerOAuthRoutes(app: Application) {
         const tokenFromBody = req.body.g_csrf_token;
         const cookies = req.signedCookies;
         if (credential === undefined) {
-            return res.redirect(200, frontend_url + '/auth/failed');
+            return res.redirect(frontend_url + '/auth/failed');
         }
 
         if (tokenFromBody === undefined) {
-            return res.redirect(200, frontend_url + '/auth/failed');
+            return res.redirect(frontend_url + '/auth/failed');
         }
 
 
@@ -41,7 +41,7 @@ export function registerOAuthRoutes(app: Application) {
         });
         req.session.userId = user._id as string;
         req.session.accessToken = token;
-        return res.redirect(200, frontend_url + '/auth/success');
+        return res.redirect(frontend_url + '/auth/success');
     });
 
     app.get('/auth/google', (req, res) => {
