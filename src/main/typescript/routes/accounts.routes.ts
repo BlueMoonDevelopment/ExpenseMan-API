@@ -11,6 +11,8 @@ import { Income } from '../models/income.model';
 
 function test(app: Application) {
     app.get('/test', async (req, res) => {
+        console.log(req.session.userId);
+        console.log(req.session.accessToken);
         res.send({ userID: req.session.userId, accessToken: req.session.accessToken });
     });
 }
