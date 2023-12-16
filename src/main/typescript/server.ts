@@ -92,6 +92,12 @@ declare module 'jsonwebtoken' {
     }
 }
 
+declare module 'jwt-decode' {
+    interface JwtPayload {
+        email: string | undefined;
+    }
+}
+
 /**
  * Route definitions
  */

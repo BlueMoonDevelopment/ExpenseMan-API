@@ -22,13 +22,9 @@ export function registerOAuthRoutes(app: Application) {
 
         // ToDo: Check if g_csrf_token COOKIE has same value as the token that comes from the body
 
-        const USER_DATA = JSON.parse(jwtDecode(credential));
+        const USER_DATA = jwtDecode(credential);
 
         console.log('userID: ' + USER_DATA.sub);
-        console.log('Full Name: ' + USER_DATA.name);
-        console.log('Given Name: ' + USER_DATA.given_name);
-        console.log('Family Name: ' + USER_DATA.family_name);
-        console.log('Image URL: ' + USER_DATA.picture);
         console.log('Email: ' + USER_DATA.email);
 
 
