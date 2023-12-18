@@ -27,13 +27,14 @@ export function registerOAuthRoutes(app: Application) {
         const USER_DATA = jwtDecode(credential);
 
         let user = await User.findOne({ email: USER_DATA.email, sub: USER_DATA.sub }).exec();
-        if (!user || !user.password) {
+        if (!user) {
+            console.log('user not found, registering new one!');
             // Register new user
             user = new User({
                 email: USER_DATA.email,
                 sub: USER_DATA.sub,
             });
-            await user.save();
+            user.save();
         }
 
 
