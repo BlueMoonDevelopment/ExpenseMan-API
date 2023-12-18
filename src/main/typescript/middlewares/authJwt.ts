@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { jwt_secret } from '../config.json';
+import { security_settings } from '../config.json';
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const token = req.session.accessToken;
@@ -10,7 +10,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
         return res.status(401).send({ message: 'Unauthorized! Session not found or expired!' });
     }
 
-    jwt.verify(token, jwt_secret, (err, decoded) => {
+    jwt.verify(token, security_settings.jwt_secret, (err, decoded) => {
         if (err) {
             return res.status(401).send({ message: 'Unauthorized! Error: ' + err.name + ': ' + err.message });
         }

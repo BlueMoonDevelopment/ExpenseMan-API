@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import jwt from 'jsonwebtoken';
 
 import { User } from './models/user.model';
-import { jwt_secret, frontend_url } from './config.json';
+import { server_settings, security_settings } from './config.json';
 import { authJwt } from './middlewares/authJwt';
 import { debug } from './tools/logmanager';
 
@@ -12,17 +12,11 @@ export function registerOAuthRoutes(app: Application) {
     app.post('/auth/google', async (req, res) => {
         const credential = req.body.credential;
         const tokenFromBody = req.body.g_csrf_token;
-        const cookies = req.signedCookies;
-        if (credential === undefined) {
-            return res.redirect(frontend_url + '/auth/failed');
+        const cookie = req.cookies['g_csrf_token'];
+
+        if ((credential === undefined || tokenFromBody === undefined || cookie === undefined) || (tokenFromBody != cookie)) {
+            return res.redirect(server_settings.frontend_url + '/auth/failed');
         }
-
-        if (tokenFromBody === undefined) {
-            return res.redirect(frontend_url + '/auth/failed');
-        }
-
-
-        // ToDo: Check if g_csrf_token COOKIE has same value as the token that comes from the body
 
         const USER_DATA = jwtDecode(credential);
 
@@ -38,13 +32,13 @@ export function registerOAuthRoutes(app: Application) {
         }
 
 
-        const token = jwt.sign({ id: user.id }, jwt_secret, {
+        const token = jwt.sign({ id: user.id }, security_settings.jwt_secret, {
             // 24 hours
-            expiresIn: 86400,
+            expiresIn: security_settings.session_expires_in_seconds,
         });
         req.session.userId = user._id as string;
         req.session.accessToken = token;
-        return res.redirect(frontend_url + '/auth/success');
+        return res.redirect(server_settings.frontend_url + '/auth/success');
     });
 
     app.get('/auth/google', (req, res) => {

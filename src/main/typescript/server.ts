@@ -26,7 +26,7 @@ import { registerOAuthRoutes } from './oauthhelper';
 /**
  * Required configuration sections
  */
-import { website_port, mongodb_auth_url, session_secret, frontend_url, development_mode } from './config.json';
+import { server_settings, database_settings, security_settings } from './config.json';
 
 /**
  * App Variables
@@ -46,13 +46,13 @@ declare module 'express-session' {
  */
 mongoose.Promise = global.Promise;
 mongoose.set('strictQuery', false);
-mongoose.connect(mongodb_auth_url).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
+mongoose.connect(database_settings.mongodb_auth_url).then(() => info('Connected to mongodb')).catch((err) => errorWithError('Error connecting to mongodb', err));
 
 /**
  * App Configuration
  */
 app.use(cors({
-    origin: frontend_url,
+    origin: server_settings.frontend_url,
     credentials: true,
 }));
 app.use(cookies());
@@ -61,11 +61,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({
     resave: false,
     saveUninitialized: false,
-    secret: session_secret,
+    secret: security_settings.session_secret,
     cookie: {
         maxAge: oneDay,
-        sameSite: development_mode ? 'lax' : 'none',
-        secure: !development_mode,
+        sameSite: server_settings.development_mode ? 'lax' : 'none',
+        secure: !server_settings.development_mode,
     },
 }));
 
@@ -117,8 +117,8 @@ app.use(function (req, res) {
 /**
  * Server Activation
  */
-app.listen(website_port, () => {
-    info(`Listening to requests at Port ${website_port}. 
-    Development mode: ${development_mode}
-    Frontend-URL: ${frontend_url}`);
+app.listen(server_settings.website_port, () => {
+    info(`Listening to requests at Port ${server_settings.website_port}. 
+    Development mode: ${server_settings.development_mode}
+    Frontend-URL: ${server_settings.frontend_url}`);
 });
