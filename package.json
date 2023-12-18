@@ -46,7 +46,7 @@
         "@types/cors": "^2.8.17",
         "@types/express": "^4.17.15",
         "@types/express-session": "^1.17.10",
-        "@types/jsonwebtoken": "^9.0.4",
+        "@types/jsonwebtoken": "^9.0.5",
         "@types/mongo-sanitize": "^1.0.3",
         "@types/node": "^20.8.6",
         "@types/swagger-jsdoc": "^6.0.4",
