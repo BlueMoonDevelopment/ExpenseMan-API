@@ -2,12 +2,10 @@ import { Application } from 'express';
 import { jwtDecode } from 'jwt-decode';
 import jwt from 'jsonwebtoken';
 
-import { User } from './models/user.model';
-import { server_settings, security_settings } from './config.json';
-import { authJwt } from './middlewares/authJwt';
-import { debug } from './tools/logmanager';
+import { User } from '../../models/user.model';
+import { server_settings, security_settings } from '../../config.json';
 
-export function registerOAuthRoutes(app: Application) {
+export function register_google_oauth_20_routes(app: Application) {
     // Either sign-in or sign-up and then sign-in
     app.post('/auth/google', async (req, res) => {
         const credential = req.body.credential;
@@ -43,10 +41,5 @@ export function registerOAuthRoutes(app: Application) {
 
     app.get('/auth/google', (req, res) => {
         return res.status(403).json({ 'message': 'no direct access!' });
-    });
-
-    app.get('/auth/checksignedin', authJwt.verifyToken, (req, res) => {
-        debug('user is signed in');
-        return res.status(200).send();
     });
 }

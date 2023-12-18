@@ -21,7 +21,12 @@ import { registerAccountRoutes } from './routes/accounts.routes';
 import { registerCategoryRoutes } from './routes/categories.routes';
 import { registerIncomeRoutes } from './routes/income.routes';
 import { registerExpenseRoutes } from './routes/expense.routes';
-import { registerOAuthRoutes } from './oauthhelper';
+
+/**
+ * Required oauth routes
+ */
+import { register_general_oauth_routes } from './middlewares/oauth/general_oauth_routes';
+import { register_google_oauth_20_routes } from './middlewares/oauth/google_oauth20_manager';
 
 /**
  * Required configuration sections
@@ -32,14 +37,6 @@ import { server_settings, database_settings, security_settings } from './config.
  * App Variables
  */
 const app: Application = express();
-const oneDay = 1000 * 60 * 60 * 24;
-
-declare module 'express-session' {
-    interface Session {
-        userId: string;
-        accessToken: string;
-    }
-}
 
 /**
  * Database connection
@@ -63,7 +60,7 @@ app.use(session({
     saveUninitialized: false,
     secret: security_settings.session_secret,
     cookie: {
-        maxAge: oneDay,
+        maxAge: security_settings.session_expires_in_seconds,
         sameSite: server_settings.development_mode ? 'lax' : 'none',
         secure: !server_settings.development_mode,
     },
@@ -73,19 +70,16 @@ app.use(morgan('combined'));
 app.use(express.static(__dirname + '/public'));
 app.set('trust proxy', true);
 
-
-// Setup header to allow access-token
-app.use(function (req, res, next) {
-    res.header(
-        'Access-Control-Allow-Headers',
-        'x-access-token, Origin, Content-Type, Accept',
-    );
-    next();
-});
-
 /**
  * Type definitions
  */
+declare module 'express-session' {
+    interface Session {
+        userId: string;
+        accessToken: string;
+    }
+}
+
 declare module 'jsonwebtoken' {
     interface JwtPayload {
         id: string;
@@ -105,7 +99,12 @@ registerAccountRoutes(app);
 registerCategoryRoutes(app);
 registerIncomeRoutes(app);
 registerExpenseRoutes(app);
-registerOAuthRoutes(app);
+
+/**
+ * OAuth definitions
+ */
+register_general_oauth_routes(app);
+register_google_oauth_20_routes(app);
 
 registerSwaggerUI(app);
 
