@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 
 import { User } from './models/user.model';
 import { jwt_secret, frontend_url } from './config.json';
+import { authJwt } from './middlewares/authJwt';
+import { debug } from './tools/logmanager';
 
 export function registerOAuthRoutes(app: Application) {
     // Either sign-in or sign-up and then sign-in
@@ -46,5 +48,10 @@ export function registerOAuthRoutes(app: Application) {
 
     app.get('/auth/google', (req, res) => {
         return res.status(403).json({ 'message': 'no direct access!' });
+    });
+
+    app.get('/auth/checksignedin', authJwt.verifyToken, (req, res) => {
+        debug('user is signed in');
+        return res.status(200).send();
     });
 }

@@ -19,9 +19,6 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
         if (payload.id != userId) {
             return res.status(401).send({ message: 'Unauthorized! UserID from Session does not match UserID from Payload!' });
         }
-
-        req.body.token_user_id = payload.id;
-
         next();
     });
 };
