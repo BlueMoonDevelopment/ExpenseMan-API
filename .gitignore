@@ -1,6 +1,7 @@
 #stuff to ignore:
-src/main/typescript/config.json
+src/main/json/config.json
 .idea
+.vscode
 
 # Logs
 logs

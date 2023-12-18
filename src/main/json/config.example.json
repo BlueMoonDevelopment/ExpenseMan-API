@@ -1,0 +1,19 @@
+{
+  "server_settings": {
+    "website_port": 8080,
+    "debug_log": false,
+    "development_mode": true,
+    "frontend_url": "http://localhost:3000"
+  },
+  "database_settings": {
+    "mongodb_auth_url": "mongodb://127.0.0.1/product"
+  },
+  "account_settings": {
+    "account_limit": 3,
+    "default_account_currency": "$"
+  },
+  "security_settings": {
+    "jwt_secret": "secret",
+    "session_secret": "secret"
+  }
+}

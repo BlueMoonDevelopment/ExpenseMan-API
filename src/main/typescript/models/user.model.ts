@@ -12,6 +12,7 @@ const UserSchema: Schema = new Schema({
     sub: {
         type: String,
         required: true,
+        unique: true,
     },
 });
 

@@ -4,7 +4,7 @@ import sanitize from 'mongo-sanitize';
 
 import { authJwt } from '../middlewares/authJwt';
 import { Account } from '../models/account.model';
-import { account_settings } from '../config.json';
+import { account_settings } from '../../json/config.json';
 import { Expense } from '../models/expense.model';
 import { Income } from '../models/income.model';
 
