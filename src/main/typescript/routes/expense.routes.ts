@@ -16,12 +16,6 @@ import { Category } from '../models/categories.model';
  *     description: Brings up all expenses for your user if no category_id, account_id or expense_id is specified
  *     summary: Get expenses
  *     operationId: expense__get
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: false
  *       content:
@@ -106,7 +100,7 @@ import { Category } from '../models/categories.model';
  *             example:
  *               message: "Specified expense_id not found."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -116,12 +110,12 @@ import { Category } from '../models/categories.model';
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerGetExpenseFromUser(app: Application) {
     app.get('/expense', authJwt.verifyToken, async (req, res) => {
         try {
-            const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+            const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
             let expenses;
             if (req.body.expense_id) {
                 const inc_id = mongoose.Types.ObjectId.createFromHexString(req.body.expense_id);
@@ -165,14 +159,6 @@ function registerGetExpenseFromUser(app: Application) {
  *     summary: "Create new expense"
  *     description: "Create a new expense"
  *     operationId: "expense__post"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -229,7 +215,7 @@ function registerGetExpenseFromUser(app: Application) {
  *             example:
  *               message: "No expense name and/or type was provided."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -239,11 +225,11 @@ function registerGetExpenseFromUser(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerCreateExpense(app: Application) {
     app.post('/expense', authJwt.verifyToken, async (req, res, next) => {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
 
         if (!req.body.account_id) {
             res.status(400).send({ message: 'No account ID was provided.' });
@@ -322,14 +308,6 @@ function registerCreateExpense(app: Application) {
  *     summary: "Delete an expense"
  *     description: "Delete an expense"
  *     operationId: "expense__delete"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -368,7 +346,7 @@ function registerCreateExpense(app: Application) {
  *             example:
  *               message: "No matching expense was found for your user."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -378,14 +356,14 @@ function registerCreateExpense(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerDeleteExpense(app: Application) {
     app.delete('/expense', authJwt.verifyToken, function (req, res, next) {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
         const expense_id = mongoose.Types.ObjectId.createFromHexString(req.body.expense_id);
 
-        Expense.findOneAndRemove({
+        Expense.findOneAndDelete({
             _id: expense_id,
             expense_owner_id: user_id,
         }, (err: mongoose.CallbackError, result: mongoose.Document) => {
@@ -409,14 +387,6 @@ function registerDeleteExpense(app: Application) {
  *     summary: "Update an expense"
  *     description: "Update an expense for your user, expense_id is required, everything else is optional."
  *     operationId: "expense__put"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -467,7 +437,7 @@ function registerDeleteExpense(app: Application) {
  *             example:
  *               message: "No matching expense was found for your user."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -477,11 +447,11 @@ function registerDeleteExpense(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerUpdateExpense(app: Application) {
     app.put('/expense', authJwt.verifyToken, function (req, res, next) {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
         const expense_id = mongoose.Types.ObjectId.createFromHexString(req.body.expense_id);
 
         const data = {

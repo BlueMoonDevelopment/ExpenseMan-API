@@ -2,10 +2,11 @@
  * Required external modules
  */
 import express, { Application } from 'express';
-import ratelimit from 'express-rate-limit';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import session from 'express-session';
+import morgan from 'morgan';
+import cookies from 'cookie-parser';
 
 /**
  * Required internal modules
@@ -16,7 +17,6 @@ import { registerSwaggerUI } from './swaggerhelper';
 /**
  * Required routes
  */
-import { registerAuthRoutes } from './routes/auth.routes';
 import { registerAccountRoutes } from './routes/accounts.routes';
 import { registerCategoryRoutes } from './routes/categories.routes';
 import { registerIncomeRoutes } from './routes/income.routes';
@@ -55,7 +55,9 @@ app.use(cors({
     origin: frontend_url,
     credentials: true,
 }));
+app.use(cookies());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(session({
     resave: false,
     saveUninitialized: false,
@@ -67,7 +69,7 @@ app.use(session({
     },
 }));
 
-app.use(ratelimit({ windowMs: 60 * 1000, max: 60 }));
+app.use(morgan('combined'));
 app.use(express.static(__dirname + '/public'));
 app.set('trust proxy', true);
 
@@ -90,10 +92,15 @@ declare module 'jsonwebtoken' {
     }
 }
 
+declare module 'jwt-decode' {
+    interface JwtPayload {
+        email: string | undefined;
+    }
+}
+
 /**
  * Route definitions
  */
-registerAuthRoutes(app);
 registerAccountRoutes(app);
 registerCategoryRoutes(app);
 registerIncomeRoutes(app);

@@ -15,12 +15,6 @@ import { Category } from '../models/categories.model';
  *     description: Brings up all categories for your user if no category_id is specified, or single category
  *     summary: Get categories
  *     operationId: categories__get
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: false
  *       content:
@@ -95,7 +89,7 @@ import { Category } from '../models/categories.model';
  *             example:
  *               message: "Specified category_id not found."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -105,12 +99,12 @@ import { Category } from '../models/categories.model';
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerGetCategoriesFromUser(app: Application) {
     app.get('/categories', authJwt.verifyToken, async (req, res) => {
         try {
-            const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+            const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
 
             let categories;
 
@@ -142,14 +136,6 @@ function registerGetCategoriesFromUser(app: Application) {
  *     summary: "Create new category"
  *     description: "Create a new category"
  *     operationId: "categories__post"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -201,7 +187,7 @@ function registerGetCategoriesFromUser(app: Application) {
  *             example:
  *               message: "No category name and/or type was provided."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -211,11 +197,11 @@ function registerGetCategoriesFromUser(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerCreateCategory(app: Application) {
     app.post('/categories', authJwt.verifyToken, async (req, res, next) => {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
 
         if (!req.body.category_name) {
             res.status(400).send({ message: 'No category name was provided.' });
@@ -255,14 +241,6 @@ function registerCreateCategory(app: Application) {
  *     summary: "Delete a category"
  *     description: "Delete a category"
  *     operationId: "categories__delete"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -301,7 +279,7 @@ function registerCreateCategory(app: Application) {
  *             example:
  *               message: "No matching category was found for your user."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -311,14 +289,14 @@ function registerCreateCategory(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerDeleteCategory(app: Application) {
     app.delete('/categories', authJwt.verifyToken, function (req, res, next) {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
         const category_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
 
-        Category.findOneAndRemove({
+        Category.findOneAndDelete({
             _id: category_id,
             category_owner_id: user_id,
         }, (err: mongoose.CallbackError, result: mongoose.Document) => {
@@ -343,14 +321,6 @@ function registerDeleteCategory(app: Application) {
  *     summary: "Update a category"
  *     description: "Update a category for your user, category_id is required, everything else is optional."
  *     operationId: "categories__put"
- *     consumes:
- *     - "application/json"
- *     parameters:
- *       - in: header
- *         name: x-access-token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -404,7 +374,7 @@ function registerDeleteCategory(app: Application) {
  *             example:
  *               message: "No matching category was found for your user."
  *       401:
- *         description: "No token provided or token is wrong"
+ *         description: "Unauthorized, request has no valid session"
  *         content:
  *           application/json:
  *             schema:
@@ -414,11 +384,11 @@ function registerDeleteCategory(app: Application) {
  *                   title: "Error message"
  *                   type: "string"
  *             example:
- *               message: "No token provided!"
+ *               message: "Unauthorized!"
  */
 function registerUpdateCategory(app: Application) {
     app.put('/categories', authJwt.verifyToken, function (req, res, next) {
-        const user_id = mongoose.Types.ObjectId.createFromHexString(req.body.token_user_id);
+        const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
         const category_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
 
         const data = {

@@ -8,8 +8,6 @@
         "default_account_currency": "$"
     },
     "session_secret": "secret",
-    "google_oauth_client_id": "clientid",
-    "google_oauth_client_secret": "secret",
     "frontend_url": "http://localhost:3000",
     "development_mode": true
 }
