@@ -1,4 +1,4 @@
-import { server_settings } from '../config.json';
+import { server_settings } from '../../json/config.json';
 
 /**
 * If debug_log is enabled in config.json file, print out debug message to console

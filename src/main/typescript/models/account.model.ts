@@ -1,5 +1,5 @@
 import mongoose, { InferSchemaType } from 'mongoose';
-import { account_settings } from '../config.json';
+import { account_settings } from '../../json/config.json';
 
 const AccountSchema = new mongoose.Schema({
     account_owner_id: {

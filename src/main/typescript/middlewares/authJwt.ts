@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { security_settings } from '../config.json';
+import { security_settings } from '../../json/config.json';
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const token = req.session.accessToken;

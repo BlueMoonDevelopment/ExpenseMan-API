@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import jwt from 'jsonwebtoken';
 
 import { User } from '../../models/user.model';
-import { server_settings, security_settings } from '../../config.json';
+import { server_settings, security_settings } from '../../../json/config.json';
 
 export function register_google_oauth_20_routes(app: Application) {
     // Either sign-in or sign-up and then sign-in

@@ -31,7 +31,8 @@ import { register_google_oauth_20_routes } from './middlewares/oauth/google_oaut
 /**
  * Required configuration sections
  */
-import { server_settings, database_settings, security_settings } from './config.json';
+import { server_settings, database_settings, security_settings } from '../json/config.json';
+import path from 'node:path';
 
 /**
  * App Variables
@@ -67,7 +68,7 @@ app.use(session({
 }));
 
 app.use(morgan('combined'));
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname, '..', '..', '..', 'resources', 'public')));
 app.set('trust proxy', true);
 
 /**
