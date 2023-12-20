@@ -9,8 +9,13 @@ export function register_general_oauth_routes(app: Application) {
     });
 
     app.get('/auth/signout', authJwt.verifyToken, (req, res) => {
-        req.session.userId = '';
-        req.session.accessToken = '';
-        res.status(200).send();
+        req.session.destroy(err => {
+            if (err) {
+                res.status(500).send();
+            } else {
+                debug('session destroyed!');
+                res.status(200).send();
+            }
+        });
     });
 }
