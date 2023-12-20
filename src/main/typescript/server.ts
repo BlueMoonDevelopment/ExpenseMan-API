@@ -57,7 +57,7 @@ app.use(cookies());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-    resave: true,
+    resave: false,
     saveUninitialized: false,
     secret: security_settings.session_secret,
     cookie: {
