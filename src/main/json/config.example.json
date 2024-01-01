@@ -14,6 +14,7 @@
   },
   "security_settings": {
     "jwt_secret": "secret",
-    "session_secret": "secret"
+    "session_secret": "secret",
+    "session_expires_in_seconds": 86400
   }
 }
