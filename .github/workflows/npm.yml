@@ -19,7 +19,7 @@ jobs:
     - name: Install TSC
       run: npm install -g typescript
     - name: copy-config
-      run: cp src/main/typescript/config.example.json src/main/typescript/config.json
+      run: cp src/main/json/config.example.json src/main/json/config.json
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
