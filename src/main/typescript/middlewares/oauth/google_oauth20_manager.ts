@@ -4,15 +4,16 @@ import jwt from 'jsonwebtoken';
 
 import { User } from '../../models/user.model';
 import { server_settings, security_settings } from '../../../json/config.json';
+import { debug } from '../../tools/logmanager';
 
 export function register_google_oauth_20_routes(app: Application) {
     // Either sign-in or sign-up and then sign-in
     app.post('/auth/google', async (req, res) => {
         const credential = req.body.credential;
-        const tokenFromBody = req.body.g_csrf_token;
-        const cookie = req.cookies['g_csrf_token'];
 
-        if ((credential === undefined || tokenFromBody === undefined || cookie === undefined) || (tokenFromBody != cookie)) {
+        debug('credential: ' + credential);
+
+        if (credential === undefined) {
             return res.redirect(server_settings.frontend_url + '/auth/failed');
         }
 

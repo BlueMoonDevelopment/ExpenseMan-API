@@ -13,6 +13,7 @@ export function register_general_oauth_routes(app: Application) {
             if (err) {
                 res.status(500).send();
             } else {
+                debug('session destroyed!');
                 res.status(200).send();
             }
         });
