@@ -2,6 +2,7 @@
  * Required external modules
  */
 import express, { Application } from 'express';
+import RateLimit from 'express-rate-limit';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import session from 'express-session';
@@ -38,6 +39,11 @@ import path from 'node:path';
  * App Variables
  */
 const app: Application = express();
+const limiter = RateLimit({
+    // 15 minutes
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+});
 
 /**
  * Database connection
@@ -53,6 +59,7 @@ app.use(cors({
     origin: server_settings.frontend_url,
     credentials: true,
 }));
+app.use(limiter);
 app.use(cookies());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
