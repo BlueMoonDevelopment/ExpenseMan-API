@@ -53,7 +53,6 @@ app.use(cors({
     origin: server_settings.frontend_url,
     credentials: true,
 }));
-app.use(cookies());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
