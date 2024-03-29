@@ -7,17 +7,17 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const userId = req.session.userId;
 
     if (token === undefined || userId === undefined || !token || !userId) {
-        return res.status(401).send({ message: 'Unauthorized! Session not found or expired!' });
+        return res.status(401).send({ message: 'Unauthorized!' });
     }
 
     jwt.verify(token, security_settings.jwt_secret, (err, decoded) => {
         if (err) {
-            return res.status(401).send({ message: 'Unauthorized! Error: ' + err.name + ': ' + err.message });
+            return res.status(401).send({ message: 'Unauthorized!' });
         }
 
         const payload = decoded as JwtPayload;
         if (payload.id != userId) {
-            return res.status(401).send({ message: 'Unauthorized! UserID from Session does not match UserID from Payload!' });
+            return res.status(401).send({ message: 'Unauthorized!' });
         }
         next();
     });
