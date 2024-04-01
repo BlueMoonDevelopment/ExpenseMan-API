@@ -16,22 +16,22 @@ import { Category } from '../models/categories.model';
  *     description: Brings up all expenses for your user if no category_id, account_id or expense_id is specified
  *     summary: Get expenses
  *     operationId: expense__get
- *     requestBody:
+ *     parameters:
+ *     - in: query
  *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: "object"
- *             properties:
- *               category_id:
- *                 type: "string"
- *                 example: "63cdbc09a3adb6d82c13254a"
- *               account_id:
- *                 type: "string"
- *                 example: "63cdbc09a3adb6d82c13254a"
- *               expense_id:
- *                 type: "string"
- *                 example: "63cdbc09a3adb6d82c13254a"
+ *       name: category_id
+ *       schema:
+ *         type: "string"
+ *     - in: query
+ *       required: false
+ *       name: account_id
+ *       schema:
+ *         type: "string"
+ *     - in: query
+ *       required: false
+ *       name: expense_id
+ *       schema:
+ *         type: "string"
  *     responses:
  *       200:
  *         description: Successful Response
@@ -116,23 +116,28 @@ function registerGetExpenseFromUser(app: Application) {
     app.get('/expense', authJwt.verifyToken, async (req, res) => {
         try {
             const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
+
+            const categoryId = req.query.category_id;
+            const accountId = req.query.account_id;
+            const expenseId = req.query.expense_id;
+
             let expenses;
-            if (req.body.expense_id) {
-                const inc_id = mongoose.Types.ObjectId.createFromHexString(req.body.expense_id);
+            if (expenseId) {
+                const inc_id = mongoose.Types.ObjectId.createFromHexString(expenseId.toString());
                 expenses = await Expense.find({ expense_owner_id: user_id, _id: inc_id }).exec();
                 if (expenses.length == 0) {
                     res.status(404).send({ message: 'Specified expense_id not found.' });
                     return;
                 }
-            } else if (req.body.account_id) {
-                const acc_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
+            } else if (accountId) {
+                const acc_id = mongoose.Types.ObjectId.createFromHexString(accountId.toString());
                 expenses = await Expense.find({ expense_owner_id: user_id, expense_account_id: acc_id }).exec();
                 if (expenses.length == 0) {
                     res.status(404).send({ message: 'No expense for account found.' });
                     return;
                 }
-            } else if (req.body.category_id) {
-                const cat_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
+            } else if (categoryId) {
+                const cat_id = mongoose.Types.ObjectId.createFromHexString(categoryId.toString());
                 expenses = await Expense.find({ expense_owner_id: user_id, expense_category_id: cat_id }).exec();
                 if (expenses.length == 0) {
                     res.status(404).send({ message: 'No expense for category found.' });

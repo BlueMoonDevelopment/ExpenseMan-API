@@ -16,22 +16,22 @@ import { Category } from '../models/categories.model';
  *     description: Brings up all incomes for your user if no category_id, account_id or income_id is specified
  *     summary: Get incomes
  *     operationId: income__get
- *     requestBody:
+ *     parameters:
+ *     - in: query
  *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: "object"
- *             properties:
- *               category_id:
- *                 type: "string"
- *                 example: "63cdbc09a3adb6d82c13254a"
- *               account_id:
- *                 type: "string"
- *                 example: "63cdbc09a3adb6d82c13254a"
- *               income_id:
- *                 type: "string"
- *                 example: "63cdbc09a3adb6d82c13254a"
+ *       name: category_id
+ *       schema:
+ *         type: "string"
+ *     - in: query
+ *       required: false
+ *       name: account_id
+ *       schema:
+ *         type: "string"
+ *     - in: query
+ *       required: false
+ *       name: income_id
+ *       schema:
+ *         type: "string"
  *     responses:
  *       200:
  *         description: Successful Response
@@ -116,23 +116,26 @@ function registerGetIncomeFromUser(app: Application) {
     app.get('/income', authJwt.verifyToken, async (req, res) => {
         try {
             const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
+            const categoryId = req.query.category_id;
+            const accountId = req.query.account_id;
+            const incomeId = req.query.income_id;
             let incomes;
-            if (req.body.income_id) {
-                const inc_id = mongoose.Types.ObjectId.createFromHexString(req.body.income_id);
+            if (incomeId) {
+                const inc_id = mongoose.Types.ObjectId.createFromHexString(incomeId.toString());
                 incomes = await Income.find({ income_owner_id: user_id, _id: inc_id }).exec();
                 if (incomes.length == 0) {
                     res.status(404).send({ message: 'Specified income_id not found.' });
                     return;
                 }
-            } else if (req.body.account_id) {
-                const acc_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
+            } else if (accountId) {
+                const acc_id = mongoose.Types.ObjectId.createFromHexString(accountId.toString());
                 incomes = await Income.find({ income_owner_id: user_id, income_account_id: acc_id }).exec();
                 if (incomes.length == 0) {
                     res.status(404).send({ message: 'No income for account found.' });
                     return;
                 }
-            } else if (req.body.category_id) {
-                const cat_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
+            } else if (categoryId) {
+                const cat_id = mongoose.Types.ObjectId.createFromHexString(categoryId.toString());
                 incomes = await Income.find({ income_owner_id: user_id, income_category_id: cat_id }).exec();
                 if (incomes.length == 0) {
                     res.status(404).send({ message: 'No income for category found.' });

@@ -17,16 +17,12 @@ import { Income } from '../models/income.model';
  *     description: Brings up all Accounts for your user if no account_id is specified, or single account
  *     summary: Get accounts
  *     operationId: accounts__get
- *     requestBody:
+ *     parameters:
+ *     - in: query
  *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: "object"
- *             properties:
- *               account_id:
- *                 type: "string"
- *                 example: "63cdbc09a3adb6d82c13254a"
+ *       name: account_id
+ *       schema:
+ *         type: "string"
  *     responses:
  *       200:
  *         description: Successful Response
@@ -131,10 +127,11 @@ function registerGetAccountsFromUser(app: Application) {
         try {
             const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
 
-            let accounts;
+            const accountId = req.query.account_id;
 
-            if (req.body.account_id) {
-                const account_id = mongoose.Types.ObjectId.createFromHexString(req.body.account_id);
+            let accounts;
+            if (accountId) {
+                const account_id = mongoose.Types.ObjectId.createFromHexString(accountId.toString());
                 accounts = await Account.find({ account_owner_id: user_id, _id: account_id }).exec();
                 if (accounts.length == 0) {
                     res.status(404).send({ message: 'Specified account_id not found.' });
