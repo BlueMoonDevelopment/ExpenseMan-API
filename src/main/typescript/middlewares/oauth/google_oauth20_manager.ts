@@ -37,7 +37,8 @@ export function register_google_oauth_20_routes(app: Application) {
         });
         req.session.userId = user._id as string;
         req.session.accessToken = token;
-        return res.redirect(server_settings.frontend_url + '/auth/success');
+        req.session.save();
+        return res.redirect(server_settings.frontend_url + '/app');
     });
 
     app.get('/auth/google', (req, res) => {

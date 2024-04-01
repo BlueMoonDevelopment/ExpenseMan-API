@@ -12,19 +12,15 @@ import { Category } from '../models/categories.model';
  *   get:
  *     tags:
  *     - "Category API"
- *     description: Brings up all categories for your user if no category_id is specified, or single category
+ *     description: Brings up all categories for your user
  *     summary: Get categories
  *     operationId: categories__get
- *     requestBody:
+ *     parameters:
+ *     - in: query
  *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: "object"
- *             properties:
- *               category_id:
- *                 type: "string"
- *                 example: "63cdbc09a3adb6d82c13254a"
+ *       name: category_id
+ *       schema:
+ *         type: "string"
  *     responses:
  *       200:
  *         description: Successful Response
@@ -105,11 +101,12 @@ function registerGetCategoriesFromUser(app: Application) {
     app.get('/categories', authJwt.verifyToken, async (req, res) => {
         try {
             const user_id = mongoose.Types.ObjectId.createFromHexString(req.session.userId);
+            const categoryId = req.query.category_id;
 
             let categories;
 
-            if (req.body.category_id) {
-                const cat_id = mongoose.Types.ObjectId.createFromHexString(req.body.category_id);
+            if (categoryId) {
+                const cat_id = mongoose.Types.ObjectId.createFromHexString(categoryId.toString());
                 categories = await Category.find({ category_owner_id: user_id, _id: cat_id }).exec();
                 if (categories.length == 0) {
                     res.status(404).send({ message: 'Specified category_id not found.' });
