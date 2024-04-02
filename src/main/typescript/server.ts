@@ -49,6 +49,7 @@ mongoose.connect(database_settings.mongodb_auth_url).then(() => info('Connected 
 /**
  * App Configuration
  */
+app.use(cookies());
 app.use(cors({
     origin: server_settings.frontend_url,
     credentials: true,
@@ -56,8 +57,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     secret: security_settings.session_secret,
     cookie: {
         maxAge: security_settings.session_expires_in_seconds,
