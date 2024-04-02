@@ -64,7 +64,6 @@ app.use(session({
         maxAge: security_settings.session_expires_in_seconds,
         sameSite: server_settings.development_mode ? 'lax' : 'none',
         secure: !server_settings.development_mode,
-        domain: server_settings.frontend_url,
     },
 }));
 
