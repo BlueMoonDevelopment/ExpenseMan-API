@@ -66,7 +66,10 @@ app.use(session({
     },
 }));
 
-app.use(morgan('combined'));
+if (server_settings.debug_log) {
+    app.use(morgan('combined'));
+}
+
 app.use(express.static(path.join(__dirname, '..', '..', '..', 'resources', 'public')));
 app.set('trust proxy', true);
 
