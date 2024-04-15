@@ -3,7 +3,7 @@
  */
 import express, { Application } from 'express';
 import cors from 'cors';
-import mongoose from 'mongoose';
+import mongoose, { connection } from 'mongoose';
 import session from 'express-session';
 import morgan from 'morgan';
 import cookies from 'cookie-parser';
@@ -33,6 +33,7 @@ import { register_google_oauth_20_routes } from './middlewares/oauth/google_oaut
  */
 import { server_settings, database_settings, security_settings } from '../json/config.json';
 import path from 'node:path';
+import MongoStore from 'connect-mongo';
 
 /**
  * App Variables
@@ -60,8 +61,8 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     secret: security_settings.session_secret,
+    store: MongoStore.create({ client: mongoose.connection.getClient() }),
     cookie: {
-        maxAge: security_settings.session_expires_in_seconds,
         sameSite: server_settings.development_mode ? 'lax' : 'none',
         secure: !server_settings.development_mode,
     },
@@ -123,5 +124,6 @@ app.use(function (req, res) {
 app.listen(server_settings.website_port, () => {
     info(`Listening to requests at Port ${server_settings.website_port}. 
     Development mode: ${server_settings.development_mode}
+    Debuglog: ${server_settings.debug_log}
     Frontend-URL: ${server_settings.frontend_url}`);
 });
