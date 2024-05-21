@@ -36,7 +36,7 @@
         "jsonwebtoken": "^9.0.2",
         "jwt-decode": "^4.0.0",
         "mongo-sanitize": "^1.1.0",
-        "mongoose": "^8.2.4",
+        "mongoose": "^8.4.0",
         "morgan": "^1.10.0",
         "swagger-jsdoc": "^6.2.8",
         "swagger-ui-express": "^5.0.0",
